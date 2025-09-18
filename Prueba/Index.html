@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Denuncias Urbanas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header con navegación -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-city"></i>
+                    <span>Denuncias Urbanas</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Reportar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Denuncias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Estadísticas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link login-btn">Iniciar Sesión</a>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Mejora tu ciudad, reporta problemas urbanos</h1>
+            <p>Tu participación ayuda a construir una ciudad más segura y limpia para todos</p>
+            <button class="cta-button">Reportar un problema</button>
+        </div>
+    </section>
+
+    <!-- Categorías de problemas -->
+    <section class="categories">
+        <h2>¿Qué tipo de problema quieres reportar?</h2>
+        <div class="categories-grid">
+            <div class="category-card">
+                <i class="fas fa-road"></i>
+                <h3>Baches</h3>
+                <p>Reporta baches en calles y avenidas</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-trash"></i>
+                <h3>Basura</h3>
+                <p>Acumulación de basura en espacios públicos</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-lightbulb"></i>
+                <h3>Alumbrado</h3>
+                <p>Focos quemados o falta de iluminación</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-tree"></i>
+                <h3>Áreas Verdes</h3>
+                <p>Mantenimiento de parques y jardines</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Denuncias recientes -->
+    <section class="recent-reports">
+        <h2>Denuncias recientes</h2>
+        <div class="reports-container">
+            <!-- Tarjeta de denuncia 1 -->
+            <div class="report-card">
+                <div class="report-image">
+                    <img src="https://via.placeholder.com/300x200?text=Bache" alt="Bache en la calle">
+                    <span class="report-status resolved">Resuelto</span>
+                </div>
+                <div class="report-content">
+                    <h3>Bache en Av. Principal</h3>
+                    <p class="report-description">Bache grande que dificulta el tránsito vehicular</p>
+                    <div class="report-meta">
+                        <span class="report-location"><i class="fas fa-map-marker-alt"></i> Centro</span>
+                        <span class="report-date"><i class="far fa-calendar"></i> 15 Oct, 2023</span>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-btn" onclick="vote(this)">
+                            <i class="far fa-thumbs-up"></i>
+                            <span class="vote-count">12</span>
+                        </button>
+                        <span class="report-category">Baches</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de denuncia 2 -->
+            <div class="report-card">
+                <div class="report-image">
+                    <img src="https://via.placeholder.com/300x200?text=Basura" alt="Basura acumulada">
+                    <span class="report-status in-progress">En proceso</span>
+                </div>
+                <div class="report-content">
+                    <h3>Basura acumulada en Parque Central</h3>
+                    <p class="report-description">Contenedores desbordados y residuos esparcidos</p>
+                    <div class="report-meta">
+                        <span class="report-location"><i class="fas fa-map-marker-alt"></i> Norte</span>
+                        <span class="report-date"><i class="far fa-calendar"></i> 18 Oct, 2023</span>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-btn" onclick="vote(this)">
+                            <i class="far fa-thumbs-up"></i>
+                            <span class="vote-count">8</span>
+                        </button>
+                        <span class="report-category">Basura</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de denuncia 3 -->
+            <div class="report-card">
+                <div class="report-image">
+                    <img src="https://via.placeholder.com/300x200?text=Alumbrado" alt="Poste de luz dañado">
+                    <span class="report-status pending">Pendiente</span>
+                </div>
+                <div class="report-content">
+                    <h3>Foco quemado en Calle Secundaria</h3>
+                    <p class="report-description">Poste de luz sin funcionar, zona oscura por las noches</p>
+                    <div class="report-meta">
+                        <span class="report-location"><i class="fas fa-map-marker-alt"></i> Sur</span>
+                        <span class="report-date"><i class="far fa-calendar"></i> 20 Oct, 2023</span>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-btn" onclick="vote(this)">
+                            <i class="far fa-thumbs-up"></i>
+                            <span class="vote-count">5</span>
+                        </button>
+                        <span class="report-category">Alumbrado</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-all-container">
+            <button class="view-all-btn">Ver todas las denuncias</button>
+        </div>
+    </section>
+
+    <!-- Estadísticas -->
+    <section class="stats">
+        <h2>Nuestro impacto en la ciudad</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <i class="fas fa-flag"></i>
+                <h3>1,240</h3>
+                <p>Denuncias reportadas</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-check-circle"></i>
+                <h3>856</h3>
+                <p>Problemas resueltos</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <h3>3,450</h3>
+                <p>Ciudadanos participando</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>25</h3>
+                <p>Barrios cubiertos</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Download -->
+    <section class="app-download">
+        <div class="app-content">
+            <div class="app-text">
+                <h2>Descarga nuestra aplicación móvil</h2>
+                <p>Reporta problemas urbanos desde cualquier lugar y recibe actualizaciones en tiempo real</p>
+                <div class="app-buttons">
+                    <button class="app-btn">
+                        <i class="fab fa-google-play"></i>
+                        <span>Google Play</span>
+                    </button>
+                    <button class="app-btn">
+                        <i class="fab fa-apple"></i>
+                        <span>App Store</span>
+                    </button>
+                </div>
+            </div>
+            <div class="app-image">
+                <img src="https://via.placeholder.com/300x500?text=App" alt="Aplicación móvil">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Denuncias Urbanas</h3>
+                <p>Plataforma para la participación ciudadana en el mejoramiento de espacios urbanos.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="#">Cómo reportar</a></li>
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
+                    <li><a href="#">Términos de uso</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-envelope"></i> info@denunciasurbanas.org</p>
+                <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+                <p><i class="fas fa-map-marker-alt"></i> Av. Principal #123, Ciudad</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Plataforma de Denuncias Urbanas. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Función para el sistema de votos
+        function vote(button) {
+            const voteCount = button.querySelector('.vote-count');
+            let count = parseInt(voteCount.textContent);
+            
+            if (button.classList.contains('voted')) {
+                count--;
+                button.classList.remove('voted');
+                button.querySelector('i').classList.remove('fas');
+                button.querySelector('i').classList.add('far');
+            } else {
+                count++;
+                button.classList.add('voted');
+                button.querySelector('i').classList.remove('far');
+                button.querySelector('i').classList.add('fas');
+            }
+            
+            voteCount.textContent = count;
+        }
+
+        // Menú hamburguesa para móviles
+        const hamburger = document.querySelector(".hamburger");
+        const navMenu = document.querySelector(".nav-menu");
+
+        hamburger.addEventListener("click", () => {
+            hamburger.classList.toggle("active");
+            navMenu.classList.toggle("active");
+        });
+
+        document.querySelectorAll(".nav-link").forEach(n => n.addEventListener("click", () => {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+        }));
+    </script>
+</body>
+</html>
