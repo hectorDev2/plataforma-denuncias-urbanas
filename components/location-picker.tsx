@@ -13,37 +13,20 @@ interface LocationPickerProps {
   initialLocation?: Ubicacion
 }
 
-export function LocationPicker({ onLocationSelect, initialLocation }: LocationPickerProps) {
+export function LocationPicker({ onLocationSelect, initialLocation }: LocationPickerProps) 
+{
   const [direccion, setDireccion] = useState(initialLocation?.direccion || "")
   const [isGettingLocation, setIsGettingLocation] = useState(false)
 
-  const handleGetCurrentLocation = () => {
+  const handleGetCurrentLocation = () => 
+  {
     setIsGettingLocation(true)
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const ubicacion: Ubicacion = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            direccion: direccion || "Ubicación actual",
-          }
-          onLocationSelect(ubicacion)
-          setIsGettingLocation(false)
-        },
-        (error) => {
-          console.error("[v0] Error getting location:", error)
-          // Usar ubicación por defecto si falla
-          const ubicacion: Ubicacion = {
-            lat: 19.4326,
-            lng: -99.1332,
-            direccion: direccion || "Ciudad de México",
-          }
-          onLocationSelect(ubicacion)
-          setIsGettingLocation(false)
-        },
-      )
-    } else {
+    if ("geolocation" in navigator) 
+    
+
+  else 
+    {
       // Geolocalización no disponible, usar ubicación por defecto
       const ubicacion: Ubicacion = {
         lat: 19.4326,
