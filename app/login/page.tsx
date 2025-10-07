@@ -34,7 +34,7 @@ export default function LoginPage() {
     if (success) {
       router.push("/")
     } else {
-      setError("Credenciales incorrectas. Intenta con: juan@email.com o carlos@gobierno.gob")
+      setError("Credenciales incorrectas o no validas. Intenta con: juan@email.com o carlos@gobierno.gob (Cuentas de prueba)")
     }
 
     setIsLoading(false)
