@@ -44,22 +44,8 @@ export function DenunciaCard({ denuncia }: DenunciaCardProps) {
           <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{denuncia.descripcion}</p>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-2 text-xs text-muted-foreground border-t pt-4">
-          <div className="flex items-center gap-2 w-full">
-            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="truncate">{denuncia.ubicacion.direccion}</span>
-          </div>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>{formatDistanceToNow(new Date(denuncia.fecha), { addSuffix: true, locale: es })}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <User className="h-3.5 w-3.5" />
-              <span>{denuncia.ciudadanoNombre}</span>
-            </div>
-          </div>
-        </CardFooter>
+        
+        
       </Card>
     </Link>
   )
