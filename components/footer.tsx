@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { MapPin, Mail, Phone } from "lucide-react"
+import Link from "next/link";
+import { MapPin, Mail, Phone } from "lucide-react";
 
 export function Footer() {
   return (
@@ -13,7 +13,8 @@ export function Footer() {
               <span className="font-bold text-lg">Denuncias Urbanas</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Plataforma ciudadana para reportar y dar seguimiento a problemas urbanos.
+              Plataforma ciudadana para reportar y dar seguimiento a problemas
+              urbanos.
             </p>
           </div>
 
@@ -22,17 +23,26 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Enlaces</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Inicio
                 </Link>
               </li>
               <li>
-                <Link href="/denuncias" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/denuncias"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Ver Denuncias
                 </Link>
               </li>
               <li>
-                <Link href="/nueva-denuncia" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/nueva-denuncia"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Reportar Problema
                 </Link>
               </li>
@@ -58,7 +68,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                +52 55 1234 5678
+                +51 984 123 456
               </li>
             </ul>
           </div>
@@ -69,5 +79,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
