@@ -11,29 +11,8 @@ import Link from "next/link"
 export default function MisDenunciasPage() {
   const { usuario, isAuthenticated } = useAuth()
 
-  if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="pt-6 text-center space-y-4">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground" />
-            <div className="space-y-2">
-              <h2 className="text-xl font-bold">Inicia sesión para ver tus denuncias</h2>
-              <p className="text-muted-foreground">Necesitas una cuenta para acceder a esta sección</p>
-            </div>
-            <div className="flex gap-3 justify-center">
-              <Button asChild>
-                <Link href="/login">Iniciar Sesión</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/registro">Registrarse</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  if (!isAuthenticated) 
+    
 
   // Filtrar denuncias del usuario actual
   const misDenuncias = mockDenuncias.filter((d) => d.ciudadanoId === usuario?.id)
