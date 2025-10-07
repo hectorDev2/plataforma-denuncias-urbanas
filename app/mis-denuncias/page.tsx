@@ -74,20 +74,7 @@ export default function MisDenunciasPage() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="pt-6 text-center py-12">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No tienes denuncias aún</h3>
-            <p className="text-muted-foreground mb-4">Comienza reportando un problema en tu comunidad</p>
-            <Button asChild>
-              <Link href="/nueva-denuncia">
-                <Plus className="h-4 w-4 mr-2" />
-                Crear Primera Denuncia
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+        
     </div>
   )
 }
