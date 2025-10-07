@@ -14,6 +14,31 @@ import { useAuth } from "@/lib/auth-context"
 import { MapPin, AlertCircle } from "lucide-react"
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const { login } = useAuth()
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
+
+    // Simulación de delay de red
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    const success = login(email, password)
+
+    if (success) {
+      router.push("/")
+    } else {
+      setError("Credenciales incorrectas. Intenta con: juan@email.com o carlos@gobierno.gob")
+    }
+
+    setIsLoading(false)
+  }
 
 
   return (
