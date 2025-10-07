@@ -26,16 +26,7 @@ export function LocationPicker({ onLocationSelect, initialLocation }: LocationPi
     
 
   else 
-    {
-      // Geolocalización no disponible, usar ubicación por defecto
-      const ubicacion: Ubicacion = {
-        lat: 19.4326,
-        lng: -99.1332,
-        direccion: direccion || "Ciudad de México",
-      }
-      onLocationSelect(ubicacion)
-      setIsGettingLocation(false)
-    }
+   
   }
 
   return (
