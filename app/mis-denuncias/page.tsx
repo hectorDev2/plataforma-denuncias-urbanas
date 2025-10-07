@@ -12,6 +12,29 @@ export default function MisDenunciasPage() {
   const { usuario, isAuthenticated } = useAuth()
 
   if (!isAuthenticated) 
+    {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <Card className="max-w-md mx-auto">
+          <CardContent className="pt-6 text-center space-y-4">
+            <FileText className="h-12 w-12 mx-auto text-muted-foreground" />
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold">Inicia sesión para ver tus denuncias</h2>
+              <p className="text-muted-foreground">Necesitas una cuenta para acceder a esta sección</p>
+            </div>
+            <div className="flex gap-3 justify-center">
+              <Button asChild>
+                <Link href="/login">Iniciar Sesión</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/registro">Registrarse</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
     
 
   // Filtrar denuncias del usuario actual
@@ -74,7 +97,21 @@ export default function MisDenunciasPage() {
           ))}
         </div>
       ) : (
-        
+        <Card>
+          <CardContent className="pt-6 text-center py-12">
+            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No tienes denuncias aún</h3>
+            <p className="text-muted-foreground mb-4">Comienza reportando un problema en tu comunidad</p>
+            <Button asChild>
+              <Link href="/nueva-denuncia">
+                <Plus className="h-4 w-4 mr-2" />
+                Crear Primera Denuncia
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+       
     </div>
   )
 }
