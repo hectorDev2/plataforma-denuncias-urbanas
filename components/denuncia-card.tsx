@@ -32,7 +32,18 @@ export function DenunciaCard({ denuncia }: DenunciaCardProps) {
           </div>
         </div>
 
-      
+        <CardContent className="pt-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className={`${categoriaInfo.color} text-white border-0`}>
+              {categoriaInfo.label}
+            </Badge>
+          </div>
+
+          <h3 className="font-semibold text-lg line-clamp-2 text-balance">{denuncia.titulo}</h3>
+
+          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{denuncia.descripcion}</p>
+        </CardContent>
+
 
         <CardFooter className="flex flex-col gap-2 text-xs text-muted-foreground border-t pt-4">
           <div className="flex items-center gap-2 w-full">
