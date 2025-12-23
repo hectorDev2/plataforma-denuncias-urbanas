@@ -11,8 +11,9 @@ import { MapPin, Calendar, User, ArrowLeft } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 
-export default function DenunciaDetallePage({ params }: { params: { id: string } }) {
-  const denuncia = mockDenuncias.find((d) => d.id === params.id)
+export default async function DenunciaDetallePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const denuncia = mockDenuncias.find((d) => d.id === id)
 
   if (!denuncia) {
     notFound()
