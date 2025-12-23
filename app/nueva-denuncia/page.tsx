@@ -13,8 +13,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { categoriasConfig } from "@/data/mock-data"
 import type { CategoriaDenuncia, Ubicacion } from "@/lib/types"
-import { Upload, CheckCircle2, AlertCircle, MapPin, Navigation } from "lucide-react"
+import { Upload, CheckCircle2, AlertCircle, MapPin } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { LocationPicker } from "@/components/location-picker"
 
 export default function NuevaDenunciaPage() {
   const { isAuthenticated, usuario } = useAuth()
@@ -28,7 +29,6 @@ export default function NuevaDenunciaPage() {
     titulo: "",
     descripcion: "",
     categoria: "" as CategoriaDenuncia | "",
-    direccion: "",
     ubicacion: null as Ubicacion | null,
     imagen: null as File | null,
   })
@@ -45,42 +45,6 @@ export default function NuevaDenunciaPage() {
     }
   }
 
-  const handleGetCurrentLocation = () => {
-    setIsGettingLocation(true)
-
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const ubicacion: Ubicacion = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            direccion: formData.direccion || "Ubicación actual",
-          }
-          handleChange("ubicacion", ubicacion)
-          setIsGettingLocation(false)
-        },
-        (error) => {
-          console.error("[v0] Error getting location:", error)
-          const ubicacion: Ubicacion = {
-            lat: 19.4326,
-            lng: -99.1332,
-            direccion: formData.direccion || "Ciudad de México",
-          }
-          handleChange("ubicacion", ubicacion)
-          setIsGettingLocation(false)
-        },
-      )
-    } else {
-      const ubicacion: Ubicacion = {
-        lat: 19.4326,
-        lng: -99.1332,
-        direccion: formData.direccion || "Ciudad de México",
-      }
-      handleChange("ubicacion", ubicacion)
-      setIsGettingLocation(false)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -92,6 +56,11 @@ export default function NuevaDenunciaPage() {
 
     if (!formData.categoria) {
       setError("Por favor selecciona una categoría")
+      return
+    }
+
+    if (!formData.ubicacion) {
+      setError("Por favor selecciona una ubicación en el mapa")
       return
     }
 
@@ -229,40 +198,17 @@ export default function NuevaDenunciaPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="direccion">Ubicación *</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="direccion"
-                    placeholder="Ej: Calle Principal #123, Col. Centro"
-                    value={formData.direccion}
-                    onChange={(e) => handleChange("direccion", e.target.value)}
-                    required
-                    disabled={isLoading}
-                    className="pl-10"
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGetCurrentLocation}
-                  disabled={isGettingLocation || isLoading}
-                  className="w-full bg-transparent"
-                >
-                  <Navigation className="h-4 w-4 mr-2" />
-                  {isGettingLocation ? "Obteniendo ubicación..." : "Usar mi ubicación actual"}
-                </Button>
-                {formData.ubicacion && (
-                  <p className="text-xs text-muted-foreground">
-                    Coordenadas: {formData.ubicacion.lat.toFixed(6)}, {formData.ubicacion.lng.toFixed(6)}
-                  </p>
-                )}
+                <Label>Ubicación *</Label>
+                <LocationPicker
+                  onLocationSelect={(loc) => handleChange("ubicacion", loc)}
+                  initialLocation={formData.ubicacion || undefined}
+                />
+                <input type="hidden" name="direccion" value={formData.ubicacion?.direccion || ""} required />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="imagen">Fotografía *</Label>
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors">
+                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors hover:bg-muted/50">
                   <input
                     id="imagen"
                     type="file"
@@ -271,12 +217,27 @@ export default function NuevaDenunciaPage() {
                     disabled={isLoading}
                     className="hidden"
                   />
-                  <label htmlFor="imagen" className="cursor-pointer">
-                    <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-sm font-medium">
-                      {formData.imagen ? formData.imagen.name : "Haz clic para subir una imagen"}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">PNG, JPG hasta 10MB</p>
+                  <label htmlFor="imagen" className="cursor-pointer block w-full h-full">
+                    {formData.imagen ? (
+                      <div className="relative">
+                        <img
+                          src={URL.createObjectURL(formData.imagen)}
+                          alt="Preview"
+                          className="max-h-48 mx-auto rounded-md object-contain"
+                        />
+                        <div className="mt-2 text-sm text-muted-foreground">
+                          {formData.imagen.name} (Clic para cambiar)
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-8">
+                        <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+                        <p className="text-sm font-medium">
+                          Haz clic para subir una imagen
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">PNG, JPG hasta 10MB</p>
+                      </div>
+                    )}
                   </label>
                 </div>
               </div>

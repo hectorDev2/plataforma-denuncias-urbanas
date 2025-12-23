@@ -1,66 +1,86 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { MapPin, Navigation } from "lucide-react"
+import { Navigation } from "lucide-react"
 import type { Ubicacion } from "@/lib/types"
+import dynamic from "next/dynamic"
+import { Skeleton } from "@/components/ui/skeleton"
+
+// Dynamically import map to avoid SSR
+const InteractiveMap = dynamic(() => import("@/components/ui/interactive-map"), {
+  loading: () => <Skeleton className="h-full w-full bg-muted" />,
+  ssr: false,
+})
 
 interface LocationPickerProps {
   onLocationSelect: (ubicacion: Ubicacion) => void
   initialLocation?: Ubicacion
 }
 
-export function LocationPicker({ onLocationSelect, initialLocation }: LocationPickerProps) 
-{
+export function LocationPicker({ onLocationSelect, initialLocation }: LocationPickerProps) {
   const [direccion, setDireccion] = useState(initialLocation?.direccion || "")
+  const [coords, setCoords] = useState<{ lat: number; lng: number }>(
+    initialLocation
+      ? { lat: initialLocation.lat, lng: initialLocation.lng }
+      : { lat: -13.516, lng: -71.977 } // Default to Cusco
+  )
   const [isGettingLocation, setIsGettingLocation] = useState(false)
 
-  const handleGetCurrentLocation = () => 
-  {
+  // Update internal address state if initialLocation changes
+  useEffect(() => {
+    if (initialLocation?.direccion) {
+      setDireccion(initialLocation.direccion);
+    }
+  }, [initialLocation]);
+
+
+  const handleGetCurrentLocation = () => {
     setIsGettingLocation(true)
 
-    if ("geolocation" in navigator) 
-      {
+    if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const ubicacion: Ubicacion = {
+          const newCoords = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            direccion: direccion || "Ubicación actual",
           }
-          onLocationSelect(ubicacion)
+          setCoords(newCoords)
           setIsGettingLocation(false)
+
+          // Trigger update with generic address, allow user to refine
+          updateLocation(newCoords.lat, newCoords.lng, direccion || "Ubicación detectada (Editar dirección)")
         },
         (error) => {
-          console.error("[v0] Error getting location:", error)
-          // Usar ubicación por defecto si falla
-          const ubicacion: Ubicacion = {
-            lat: 19.4326,
-            lng: -99.1332,
-            direccion: direccion || "Ciudad de México",
-          }
-          onLocationSelect(ubicacion)
+          console.error("Error getting location:", error)
           setIsGettingLocation(false)
-        },
+        }
       )
-    }
-    
-
-  else 
-    {
-      // Geolocalización no disponible, usar ubicación por defecto
-      const ubicacion: Ubicacion = {
-        lat: 19.4326,
-        lng: -99.1332,
-        direccion: direccion || "Ciudad de México",
-      }
-      onLocationSelect(ubicacion)
+    } else {
       setIsGettingLocation(false)
     }
-   
+  }
+
+  const handleMapLocationSelect = (lat: number, lng: number) => {
+    setCoords({ lat, lng })
+    updateLocation(lat, lng, direccion)
+  }
+
+  const handleDireccionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDir = e.target.value
+    setDireccion(newDir)
+    updateLocation(coords.lat, coords.lng, newDir)
+  }
+
+  const updateLocation = (lat: number, lng: number, dir: string) => {
+    onLocationSelect({
+      lat,
+      lng,
+      direccion: dir
+    })
   }
 
   return (
@@ -72,14 +92,14 @@ export function LocationPicker({ onLocationSelect, initialLocation }: LocationPi
             id="direccion"
             placeholder="Ej: Calle Principal #123, Col. Centro"
             value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
+            onChange={handleDireccionChange}
           />
         </div>
 
         <Button
           type="button"
           variant="outline"
-          className="w-full bg-transparent"
+          className="w-full"
           onClick={handleGetCurrentLocation}
           disabled={isGettingLocation}
         >
@@ -87,12 +107,13 @@ export function LocationPicker({ onLocationSelect, initialLocation }: LocationPi
           {isGettingLocation ? "Obteniendo ubicación..." : "Usar mi ubicación actual"}
         </Button>
 
-        <div className="aspect-video w-full bg-muted rounded-lg flex items-center justify-center">
-          <div className="text-center space-y-2">
-            <MapPin className="h-8 w-8 mx-auto text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Vista previa del mapa</p>
-          </div>
+        <div className="h-[300px] w-full rounded-lg overflow-hidden border relative z-0">
+          <InteractiveMap center={coords} onLocationSelect={handleMapLocationSelect} />
         </div>
+
+        <p className="text-xs text-muted-foreground text-center">
+          Arrastra el marcador o haz clic en el mapa para ajustar la ubicación exacta
+        </p>
       </CardContent>
     </Card>
   )
