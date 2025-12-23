@@ -1,39 +1,86 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { DenunciaCard } from "@/components/denuncia-card"
-import { DenunciasMapView } from "@/components/denuncias-map-view"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { mockDenuncias, categoriasConfig, estadosConfig } from "@/data/mock-data"
-import { Search, Filter, Grid3x3, Map } from "lucide-react"
+import { useState, useEffect } from "react";
+import { DenunciaCard } from "@/components/denuncia-card";
+import { DenunciasMapView } from "@/components/denuncias-map-view";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { categoriasConfig, estadosConfig } from "@/data/mock-data";
+import { getDenuncias } from "@/lib/api";
+import { Search, Filter, Grid3x3, Map } from "lucide-react";
 
 export default function DenunciasPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoriaFilter, setCategoriaFilter] = useState<string>("todas")
-  const [estadoFilter, setEstadoFilter] = useState<string>("todos")
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoriaFilter, setCategoriaFilter] = useState<string>("todas");
+  const [estadoFilter, setEstadoFilter] = useState<string>("todos");
+  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+  const [denuncias, setDenuncias] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const filteredDenuncias = mockDenuncias.filter((denuncia) => {
+  useEffect(() => {
+    setLoading(true);
+    getDenuncias()
+      .then((data) => {
+        setDenuncias(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("No se pudieron cargar las denuncias");
+        setLoading(false);
+      });
+  }, []);
+
+  const filteredDenuncias = denuncias.filter((denuncia) => {
+    const titulo = denuncia?.titulo ?? "";
+    const descripcion = denuncia?.descripcion ?? "";
+    const direccion = denuncia?.ubicacion?.direccion ?? "";
+
     const matchesSearch =
-      denuncia.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      denuncia.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      denuncia.ubicacion.direccion.toLowerCase().includes(searchTerm.toLowerCase())
+      titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      direccion.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategoria = categoriaFilter === "todas" || denuncia.categoria === categoriaFilter
-    const matchesEstado = estadoFilter === "todos" || denuncia.estado === estadoFilter
+    const matchesCategoria =
+      categoriaFilter === "todas" || denuncia.categoria === categoriaFilter;
+    const matchesEstado =
+      estadoFilter === "todos" || denuncia.estado === estadoFilter;
 
-    return matchesSearch && matchesCategoria && matchesEstado
-  })
+    return matchesSearch && matchesCategoria && matchesEstado;
+  });
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        Cargando denuncias...
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-red-500">
+        {error}
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8 space-y-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Denuncias Urbanas</h1>
-          <p className="text-muted-foreground text-lg">Explora los reportes de problemas urbanos en tu comunidad</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            Denuncias Urbanas
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Explora los reportes de problemas urbanos en tu comunidad
+          </p>
         </div>
 
         {/* Filters */}
@@ -82,17 +129,19 @@ export default function DenunciasPage() {
         {/* View Toggle and Results */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Mostrando {filteredDenuncias.length} de {mockDenuncias.length} denuncias
+            Mostrando {filteredDenuncias.length} de {denuncias.length} denuncias
           </p>
           <div className="flex items-center gap-2">
-            {(searchTerm || categoriaFilter !== "todas" || estadoFilter !== "todos") && (
+            {(searchTerm ||
+              categoriaFilter !== "todas" ||
+              estadoFilter !== "todos") && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setSearchTerm("")
-                  setCategoriaFilter("todas")
-                  setEstadoFilter("todos")
+                  setSearchTerm("");
+                  setCategoriaFilter("todas");
+                  setEstadoFilter("todos");
                 }}
               >
                 Limpiar filtros
@@ -130,14 +179,16 @@ export default function DenunciasPage() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No se encontraron denuncias con los filtros aplicados</p>
+          <p className="text-muted-foreground text-lg">
+            No se encontraron denuncias con los filtros aplicados
+          </p>
           <Button
             variant="outline"
             className="mt-4 bg-transparent"
             onClick={() => {
-              setSearchTerm("")
-              setCategoriaFilter("todas")
-              setEstadoFilter("todos")
+              setSearchTerm("");
+              setCategoriaFilter("todas");
+              setEstadoFilter("todos");
             }}
           >
             Limpiar filtros
@@ -145,5 +196,5 @@ export default function DenunciasPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
