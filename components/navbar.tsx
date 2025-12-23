@@ -43,12 +43,14 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${pathname === link.href ? "text-primary" : "text-muted-foreground"
+                className={`text-sm font-medium transition-all duration-200 px-4 py-2 rounded-full hover:-translate-y-0.5 hover:shadow-md ${pathname === link.href
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
                   }`}
               >
                 {link.label}

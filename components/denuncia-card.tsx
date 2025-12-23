@@ -78,17 +78,19 @@ export function DenunciaCard({ denuncia, isOwner = false }: DenunciaCardProps) {
       )}
 
       <Link href={`/denuncias/${denuncia.id}`} className="block h-full">
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
-          <div className="relative h-48 w-full bg-muted">
-            <Image
-              src={denuncia.imagen || "/placeholder.svg"}
-              alt={denuncia.titulo}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            <div className="absolute top-3 right-3 flex gap-2">
-              <Badge className={estadoInfo.color}>{estadoInfo.label}</Badge>
+        <Card className="overflow-hidden h-full transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1 border-muted-foreground/20 dark:border-muted-foreground/30 dark:bg-card/50 flex flex-col">
+          <div className="p-3 pb-0">
+            <div className="relative h-48 w-full bg-muted rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src={denuncia.imagen || "/placeholder.svg"}
+                alt={denuncia.titulo}
+                fill
+                className="object-cover transition-transform duration-500 hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute top-3 right-3 flex gap-2">
+                <Badge className={`${estadoInfo.color} shadow-sm backdrop-blur-sm bg-opacity-90`}>{estadoInfo.label}</Badge>
+              </div>
             </div>
           </div>
 
