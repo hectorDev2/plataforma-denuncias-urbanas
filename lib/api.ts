@@ -1,3 +1,32 @@
+// Obtener una denuncia por su ID
+export async function getDenunciaPorId(id: string | number) {
+  const res = await fetch(`${API_URL}/denuncias/${id}`, {
+    method: "GET",
+  });
+  if (!res.ok) throw new Error("Error al obtener la denuncia");
+  const d = await res.json();
+  return {
+    id: String(d.id),
+    titulo: d.title,
+    descripcion: d.description,
+    categoria: (d.category || "").toLowerCase(),
+    estado: (d.status || "")
+      .toLowerCase()
+      .replace("pending", "pendiente")
+      .replace("resolved", "resuelta")
+      .replace("rejected", "rechazada")
+      .replace("in_review", "en-revision"),
+    fecha: d.createdAt,
+    ubicacion: {
+      lat: d.lat,
+      lng: d.lng,
+      direccion: "",
+    },
+    imagen: d.imageUrl,
+    ciudadanoId: String(d.userId),
+    ciudadanoNombre: d.user?.name || "Anónimo",
+  };
+}
 export const API_URL = "http://localhost:3000";
 
 // Obtener denuncias de un usuario específico
