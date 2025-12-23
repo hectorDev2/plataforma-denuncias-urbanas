@@ -27,7 +27,7 @@ export function MapComponent({ ubicacion, className = "" }: MapComponentProps) {
           <div className="space-y-1">
             <p className="font-medium">{ubicacion.direccion}</p>
             <p className="text-sm text-muted-foreground">
-              {ubicacion.lat.toFixed(6)}, {ubicacion.lng.toFixed(6)}
+              {typeof ubicacion.lat === "number" && !isNaN(ubicacion.lat) ? ubicacion.lat.toFixed(6) : "N/A"}, {typeof ubicacion.lng === "number" && !isNaN(ubicacion.lng) ? ubicacion.lng.toFixed(6) : "N/A"}
             </p>
           </div>
           <a

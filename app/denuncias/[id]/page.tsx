@@ -74,7 +74,9 @@ export default async function DenunciaDetallePage({
                 denuncia.imagen
                   ? denuncia.imagen.startsWith("http")
                     ? denuncia.imagen
-                    : `http://localhost:3000${denuncia.imagen.startsWith("/") ? "" : "/"}${denuncia.imagen}`
+                    : `http://localhost:3000${
+                        denuncia.imagen.startsWith("/") ? "" : "/"
+                      }${denuncia.imagen}`
                   : "/placeholder.svg"
               }
               alt={denuncia.titulo}
@@ -121,7 +123,9 @@ export default async function DenunciaDetallePage({
                 <div className="pb-4">
                   <p className="font-medium">Denuncia creada</p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(denuncia.fecha).toLocaleString('sv-SE', { timeZone: 'UTC' })}
+                    {new Date(denuncia.fecha).toLocaleString("sv-SE", {
+                      timeZone: "UTC",
+                    })}
                   </p>
                 </div>
               </div>
@@ -193,7 +197,9 @@ export default async function DenunciaDetallePage({
                     <div>
                       <p className="font-medium">Fecha de reporte</p>
                       <p className="text-muted-foreground">
-                        {new Date(denuncia.fecha).toLocaleDateString('sv-SE', { timeZone: 'UTC' })}
+                        {new Date(denuncia.fecha).toLocaleDateString("sv-SE", {
+                          timeZone: "UTC",
+                        })}
                       </p>
                     </div>
                   </div>
