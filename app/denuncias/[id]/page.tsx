@@ -1,63 +1,111 @@
-import { notFound } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { MapComponent } from "@/components/map-component"
-import { mockDenuncias, categoriasConfig, estadosConfig } from "@/data/mock-data"
-import { MapPin, Calendar, User, ArrowLeft } from "lucide-react"
-import { format } from "date-fns"
-import { es } from "date-fns/locale"
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { MapComponent } from "@/components/map-component";
+import { categoriasConfig, estadosConfig } from "@/data/mock-data";
+import { getDenunciaPorId } from "@/lib/api";
+import type { Denuncia } from "@/lib/types";
 
-export default function DenunciaDetallePage({ params }: { params: { id: string } }) {
-  const denuncia = mockDenuncias.find((d) => d.id === params.id)
+import { MapPin, Calendar, User } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
+interface DenunciaDetallePageProps {
+  params: { id: string };
+}
+
+export default async function DenunciaDetallePage({
+  params,
+}: DenunciaDetallePageProps) {
+  let denuncia: Denuncia | null = null;
+  try {
+    denuncia = await getDenunciaPorId(params.id);
+  } catch {
+    notFound();
+  }
   if (!denuncia) {
-    notFound()
+    notFound();
   }
 
-  const categoriaInfo = categoriasConfig[denuncia.categoria]
-  const estadoInfo = estadosConfig[denuncia.estado]
+  // Next.js 15: params puede ser una promesa
+  const resolvedParams = await params;
+  const categoriaInfo = categoriasConfig[denuncia.categoria] || {
+    label: denuncia.categoria,
+    color: "bg-gray-400",
+    icon: "❓",
+  };
+  const estadoInfo = estadosConfig[denuncia.estado] || {
+    label: denuncia.estado,
+    color: "bg-gray-200 text-gray-800 border-gray-300",
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <Button variant="ghost" asChild className="mb-6">
         <Link href="/denuncias">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Volver a denuncias
+          <span className="inline-flex items-center">
+            <svg
+              className="h-4 w-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Volver a denuncias
+          </span>
         </Link>
       </Button>
-
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <div className="relative h-[400px] w-full rounded-lg overflow-hidden bg-muted">
             <Image
-              src={denuncia.imagen || "/placeholder.svg"}
+              src={
+                denuncia.imagen
+                  ? denuncia.imagen.startsWith("http")
+                    ? denuncia.imagen
+                    : `http://localhost:3000${denuncia.imagen.startsWith("/") ? "" : "/"}${denuncia.imagen}`
+                  : "/placeholder.svg"
+              }
               alt={denuncia.titulo}
               fill
               className="object-cover"
               priority
             />
           </div>
-
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className={`${categoriaInfo.color} text-white border-0`}>
+              <Badge
+                variant="outline"
+                className={`${categoriaInfo.color} text-white border-0`}
+              >
                 {categoriaInfo.label}
               </Badge>
               <Badge className={estadoInfo.color}>{estadoInfo.label}</Badge>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-balance">{denuncia.titulo}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-balance">
+              {denuncia.titulo}
+            </h1>
           </div>
 
           <Separator />
 
           <div className="space-y-3">
             <h2 className="text-xl font-semibold">Descripción</h2>
-            <p className="text-muted-foreground leading-relaxed">{denuncia.descripcion}</p>
+            <p className="text-muted-foreground leading-relaxed">
+              {denuncia.descripcion}
+            </p>
           </div>
 
           <Separator />
@@ -73,7 +121,7 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                 <div className="pb-4">
                   <p className="font-medium">Denuncia creada</p>
                   <p className="text-sm text-muted-foreground">
-                    {format(new Date(denuncia.fecha), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })}
+                    {new Date(denuncia.fecha).toLocaleString('sv-SE', { timeZone: 'UTC' })}
                   </p>
                 </div>
               </div>
@@ -86,7 +134,9 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                   </div>
                   <div className="pb-4">
                     <p className="font-medium">En revisión</p>
-                    <p className="text-sm text-muted-foreground">Las autoridades están evaluando el caso</p>
+                    <p className="text-sm text-muted-foreground">
+                      Las autoridades están evaluando el caso
+                    </p>
                   </div>
                 </div>
               )}
@@ -100,7 +150,9 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                     </div>
                     <div className="pb-4">
                       <p className="font-medium">En revisión</p>
-                      <p className="text-sm text-muted-foreground">Caso evaluado por las autoridades</p>
+                      <p className="text-sm text-muted-foreground">
+                        Caso evaluado por las autoridades
+                      </p>
                     </div>
                   </div>
                   <div className="flex gap-4">
@@ -109,7 +161,9 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                     </div>
                     <div>
                       <p className="font-medium">Resuelta</p>
-                      <p className="text-sm text-muted-foreground">El problema ha sido solucionado</p>
+                      <p className="text-sm text-muted-foreground">
+                        El problema ha sido solucionado
+                      </p>
                     </div>
                   </div>
                 </>
@@ -128,7 +182,9 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                     <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                     <div>
                       <p className="font-medium">Ubicación</p>
-                      <p className="text-muted-foreground">{denuncia.ubicacion.direccion}</p>
+                      <p className="text-muted-foreground">
+                        {denuncia.ubicacion.direccion}
+                      </p>
                     </div>
                   </div>
 
@@ -137,7 +193,7 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                     <div>
                       <p className="font-medium">Fecha de reporte</p>
                       <p className="text-muted-foreground">
-                        {format(new Date(denuncia.fecha), "d 'de' MMMM 'de' yyyy", { locale: es })}
+                        {new Date(denuncia.fecha).toLocaleDateString('sv-SE', { timeZone: 'UTC' })}
                       </p>
                     </div>
                   </div>
@@ -146,7 +202,9 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
                     <User className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                     <div>
                       <p className="font-medium">Reportado por</p>
-                      <p className="text-muted-foreground">{denuncia.ciudadanoNombre}</p>
+                      <p className="text-muted-foreground">
+                        {denuncia.ciudadanoNombre}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -157,8 +215,20 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
               <div>
                 <h3 className="font-semibold mb-3">Coordenadas</h3>
                 <div className="text-sm space-y-1">
-                  <p className="text-muted-foreground">Lat: {denuncia.ubicacion.lat.toFixed(6)}</p>
-                  <p className="text-muted-foreground">Lng: {denuncia.ubicacion.lng.toFixed(6)}</p>
+                  <p className="text-muted-foreground">
+                    Lat:{" "}
+                    {typeof denuncia.ubicacion.lat === "number" &&
+                    !isNaN(denuncia.ubicacion.lat)
+                      ? denuncia.ubicacion.lat.toFixed(6)
+                      : "N/A"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    Lng:{" "}
+                    {typeof denuncia.ubicacion.lng === "number" &&
+                    !isNaN(denuncia.ubicacion.lng)
+                      ? denuncia.ubicacion.lng.toFixed(6)
+                      : "N/A"}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -168,5 +238,5 @@ export default function DenunciaDetallePage({ params }: { params: { id: string }
         </div>
       </div>
     </div>
-  )
+  );
 }
