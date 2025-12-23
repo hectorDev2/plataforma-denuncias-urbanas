@@ -6,6 +6,7 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { AuthProvider } from "@/lib/auth-context"
 import { DataProvider } from "@/lib/data-context"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,9 +34,16 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col font-sans antialiased">
         <AuthProvider>
           <DataProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </ThemeProvider>
           </DataProvider>
         </AuthProvider>
       </body>

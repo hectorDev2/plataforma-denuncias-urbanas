@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Menu, X, MapPin, User, LogOut } from "lucide-react"
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,20 +16,20 @@ export function Navbar() {
   const navLinks = isAuthenticated
     ? usuario?.rol === "autoridad"
       ? [
-          { href: "/", label: "Inicio" },
-          { href: "/denuncias", label: "Denuncias" },
-          { href: "/dashboard", label: "Dashboard" },
-        ]
-      : [
-          { href: "/", label: "Inicio" },
-          { href: "/denuncias", label: "Denuncias" },
-          { href: "/mis-denuncias", label: "Mis Denuncias" },
-          { href: "/nueva-denuncia", label: "Reportar" },
-        ]
-    : [
         { href: "/", label: "Inicio" },
         { href: "/denuncias", label: "Denuncias" },
+        { href: "/dashboard", label: "Dashboard" },
       ]
+      : [
+        { href: "/", label: "Inicio" },
+        { href: "/denuncias", label: "Denuncias" },
+        { href: "/mis-denuncias", label: "Mis Denuncias" },
+        { href: "/nueva-denuncia", label: "Reportar" },
+      ]
+    : [
+      { href: "/", label: "Inicio" },
+      { href: "/denuncias", label: "Denuncias" },
+    ]
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -47,9 +48,8 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === link.href ? "text-primary" : "text-muted-foreground"
-                }`}
+                className={`text-sm font-medium transition-colors hover:text-primary ${pathname === link.href ? "text-primary" : "text-muted-foreground"
+                  }`}
               >
                 {link.label}
               </Link>
@@ -58,6 +58,7 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <ModeToggle />
             {isAuthenticated ? (
               <>
                 <div className="flex items-center gap-2 text-sm">
@@ -94,15 +95,18 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`block py-2 text-sm font-medium transition-colors ${
-                  pathname === link.href ? "text-primary" : "text-muted-foreground"
-                }`}
+                className={`block py-2 text-sm font-medium transition-colors ${pathname === link.href ? "text-primary" : "text-muted-foreground"
+                  }`}
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
             <div className="pt-3 border-t space-y-2">
+              <div className="flex justify-between items-center py-2 px-1">
+                <span className="text-sm font-medium">Tema</span>
+                <ModeToggle />
+              </div>
               {isAuthenticated ? (
                 <>
                   <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
