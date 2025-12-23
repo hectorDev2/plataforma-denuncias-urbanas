@@ -15,10 +15,13 @@ import { categoriasConfig } from "@/data/mock-data"
 import type { CategoriaDenuncia, Ubicacion } from "@/lib/types"
 import { Upload, CheckCircle2, AlertCircle, MapPin } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { useData } from "@/lib/data-context"
+import { Denuncia } from "@/lib/types"
 import { LocationPicker } from "@/components/location-picker"
 
 export default function NuevaDenunciaPage() {
   const { isAuthenticated, usuario } = useAuth()
+  const { addDenuncia } = useData()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -71,7 +74,21 @@ export default function NuevaDenunciaPage() {
 
     setIsLoading(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const nuevaDenuncia: Denuncia = {
+      id: crypto.randomUUID(),
+      titulo: formData.titulo,
+      descripcion: formData.descripcion,
+      categoria: formData.categoria as CategoriaDenuncia,
+      estado: "pendiente",
+      fecha: new Date().toISOString(),
+      ubicacion: formData.ubicacion!,
+      // Create a local URL for the image to simulate persistence
+      imagen: formData.imagen ? URL.createObjectURL(formData.imagen) : "/placeholder.svg",
+      ciudadanoId: usuario?.id || "anon",
+      ciudadanoNombre: usuario?.nombre || "Anónimo",
+    }
+
+    addDenuncia(nuevaDenuncia)
 
     setSuccess(true)
     setIsLoading(false)

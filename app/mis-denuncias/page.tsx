@@ -1,18 +1,21 @@
 "use client"
 
+import { useState } from "react"
+
 import { DenunciaCard } from "@/components/denuncia-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { mockDenuncias } from "@/data/mock-data"
+import { useData } from "@/lib/data-context"
 import { useAuth } from "@/lib/auth-context"
 import { Plus, FileText } from "lucide-react"
 import Link from "next/link"
 
 export default function MisDenunciasPage() {
   const { usuario, isAuthenticated } = useAuth()
+  const { denuncias } = useData()
+  const [statusFilter, setStatusFilter] = useState<"todos" | "pendiente" | "en-revision" | "resuelta">("todos")
 
-  if (!isAuthenticated) 
-    {
+  if (!isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-12">
         <Card className="max-w-md mx-auto">
@@ -35,10 +38,14 @@ export default function MisDenunciasPage() {
       </div>
     )
   }
-    
 
   // Filtrar denuncias del usuario actual
-  const misDenuncias = mockDenuncias.filter((d) => d.ciudadanoId === usuario?.id)
+  const userDenuncias = denuncias.filter((d) => d.ciudadanoId === usuario?.id)
+
+  // Aplicar filtro de estado
+  const filteredDenuncias = statusFilter === "todos"
+    ? userDenuncias
+    : userDenuncias.filter(d => d.estado === statusFilter)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -55,34 +62,46 @@ export default function MisDenunciasPage() {
         </Button>
       </div>
 
-      {/* Stats */}
+      {/* Stats - Interactive Filters */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card>
+        <Card
+          className={`cursor-pointer transition-colors hover:bg-muted/50 ${statusFilter === 'todos' ? 'border-primary border-2' : ''}`}
+          onClick={() => setStatusFilter("todos")}
+        >
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{misDenuncias.length}</div>
+            <div className="text-2xl font-bold">{userDenuncias.length}</div>
             <p className="text-sm text-muted-foreground">Total</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card
+          className={`cursor-pointer transition-colors hover:bg-muted/50 ${statusFilter === 'pendiente' ? 'border-yellow-500 border-2' : ''}`}
+          onClick={() => setStatusFilter("pendiente")}
+        >
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-yellow-600">
-              {misDenuncias.filter((d) => d.estado === "pendiente").length}
+              {userDenuncias.filter((d) => d.estado === "pendiente").length}
             </div>
             <p className="text-sm text-muted-foreground">Pendientes</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card
+          className={`cursor-pointer transition-colors hover:bg-muted/50 ${statusFilter === 'en-revision' ? 'border-blue-500 border-2' : ''}`}
+          onClick={() => setStatusFilter("en-revision")}
+        >
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-blue-600">
-              {misDenuncias.filter((d) => d.estado === "en-revision").length}
+              {userDenuncias.filter((d) => d.estado === "en-revision").length}
             </div>
             <p className="text-sm text-muted-foreground">En Revisión</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card
+          className={`cursor-pointer transition-colors hover:bg-muted/50 ${statusFilter === 'resuelta' ? 'border-green-500 border-2' : ''}`}
+          onClick={() => setStatusFilter("resuelta")}
+        >
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-green-600">
-              {misDenuncias.filter((d) => d.estado === "resuelta").length}
+              {userDenuncias.filter((d) => d.estado === "resuelta").length}
             </div>
             <p className="text-sm text-muted-foreground">Resueltas</p>
           </CardContent>
@@ -90,9 +109,9 @@ export default function MisDenunciasPage() {
       </div>
 
       {/* Denuncias Grid */}
-      {misDenuncias.length > 0 ? (
+      {filteredDenuncias.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {misDenuncias.map((denuncia) => (
+          {filteredDenuncias.map((denuncia) => (
             <DenunciaCard key={denuncia.id} denuncia={denuncia} />
           ))}
         </div>
@@ -111,7 +130,7 @@ export default function MisDenunciasPage() {
           </CardContent>
         </Card>
       )}
-       
+
     </div>
   )
 }

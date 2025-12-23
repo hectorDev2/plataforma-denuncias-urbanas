@@ -6,16 +6,18 @@ import { DenunciasMapView } from "@/components/denuncias-map-view"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { mockDenuncias, categoriasConfig, estadosConfig } from "@/data/mock-data"
+import { categoriasConfig, estadosConfig } from "@/data/mock-data"
+import { useData } from "@/lib/data-context"
 import { Search, Filter, Grid3x3, Map } from "lucide-react"
 
 export default function DenunciasPage() {
+  const { denuncias } = useData()
   const [searchTerm, setSearchTerm] = useState("")
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todas")
   const [estadoFilter, setEstadoFilter] = useState<string>("todos")
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
 
-  const filteredDenuncias = mockDenuncias.filter((denuncia) => {
+  const filteredDenuncias = denuncias.filter((denuncia) => {
     const matchesSearch =
       denuncia.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       denuncia.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -82,7 +84,7 @@ export default function DenunciasPage() {
         {/* View Toggle and Results */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Mostrando {filteredDenuncias.length} de {mockDenuncias.length} denuncias
+            Mostrando {filteredDenuncias.length} de {denuncias.length} denuncias
           </p>
           <div className="flex items-center gap-2">
             {(searchTerm || categoriaFilter !== "todas" || estadoFilter !== "todos") && (

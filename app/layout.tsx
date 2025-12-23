@@ -5,6 +5,7 @@ import "./globals.css"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { AuthProvider } from "@/lib/auth-context"
+import { DataProvider } from "@/lib/data-context"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +20,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Denuncias Urbanas - Plataforma Ciudadana",
   description: "Reporta y da seguimiento a problemas urbanos en tu ciudad",
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -31,9 +32,11 @@ export default function RootLayout({
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen flex flex-col font-sans antialiased">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <DataProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </DataProvider>
         </AuthProvider>
       </body>
     </html>
