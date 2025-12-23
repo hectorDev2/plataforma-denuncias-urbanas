@@ -1,28 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { categoriasConfig } from "@/data/mock-data"
-import type { CategoriaDenuncia, Ubicacion } from "@/lib/types"
-import { Upload, CheckCircle2, AlertCircle, MapPin, Navigation } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { categoriasConfig } from "@/data/mock-data";
+import { crearDenuncia } from "@/lib/denuncias-api";
+import type { CategoriaDenuncia, Ubicacion } from "@/lib/types";
+import {
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  MapPin,
+  Navigation,
+} from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 export default function NuevaDenunciaPage() {
-  const { isAuthenticated, usuario } = useAuth()
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState("")
-  const [isGettingLocation, setIsGettingLocation] = useState(false)
+  const { isAuthenticated, usuario } = useAuth();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const [formData, setFormData] = useState({
     titulo: "",
@@ -31,22 +50,25 @@ export default function NuevaDenunciaPage() {
     direccion: "",
     ubicacion: null as Ubicacion | null,
     imagen: null as File | null,
-  })
+  });
 
-  const handleChange = (field: string, value: string | File | null | Ubicacion) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setError("")
-  }
+  const handleChange = (
+    field: string,
+    value: string | File | null | Ubicacion
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setError("");
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      handleChange("imagen", file)
+      handleChange("imagen", file);
     }
-  }
+  };
 
   const handleGetCurrentLocation = () => {
-    setIsGettingLocation(true)
+    setIsGettingLocation(true);
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -55,62 +77,69 @@ export default function NuevaDenunciaPage() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
             direccion: formData.direccion || "Ubicación actual",
-          }
-          handleChange("ubicacion", ubicacion)
-          setIsGettingLocation(false)
+          };
+          handleChange("ubicacion", ubicacion);
+          setIsGettingLocation(false);
         },
         (error) => {
-          console.error("[v0] Error getting location:", error)
+          console.error("[v0] Error getting location:", error);
           const ubicacion: Ubicacion = {
             lat: 19.4326,
             lng: -99.1332,
             direccion: formData.direccion || "Ciudad de México",
-          }
-          handleChange("ubicacion", ubicacion)
-          setIsGettingLocation(false)
-        },
-      )
+          };
+          handleChange("ubicacion", ubicacion);
+          setIsGettingLocation(false);
+        }
+      );
     } else {
       const ubicacion: Ubicacion = {
         lat: 19.4326,
         lng: -99.1332,
         direccion: formData.direccion || "Ciudad de México",
-      }
-      handleChange("ubicacion", ubicacion)
-      setIsGettingLocation(false)
+      };
+      handleChange("ubicacion", ubicacion);
+      setIsGettingLocation(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (!isAuthenticated) {
-      setError("Debes iniciar sesión para crear una denuncia")
-      return
+      setError("Debes iniciar sesión para crear una denuncia");
+      return;
     }
 
     if (!formData.categoria) {
-      setError("Por favor selecciona una categoría")
-      return
+      setError("Por favor selecciona una categoría");
+      return;
     }
 
     if (!formData.imagen) {
-      setError("Por favor sube una imagen del problema")
-      return
+      setError("Por favor sube una imagen del problema");
+      return;
     }
 
-    setIsLoading(true)
-
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    setSuccess(true)
-    setIsLoading(false)
-
-    setTimeout(() => {
-      router.push("/mis-denuncias")
-    }, 2000)
-  }
+    setIsLoading(true);
+    try {
+      await crearDenuncia({
+        title: formData.titulo,
+        description: formData.descripcion,
+        category: formData.categoria,
+        image: formData.imagen!,
+      });
+      setSuccess(true);
+      setIsLoading(false);
+      setTimeout(() => {
+        router.push("/mis-denuncias");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "Error al enviar la denuncia");
+      setIsLoading(false);
+    }
+  };
 
   if (!isAuthenticated) {
     return (
@@ -119,8 +148,12 @@ export default function NuevaDenunciaPage() {
           <CardContent className="pt-6 text-center space-y-4">
             <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground" />
             <div className="space-y-2">
-              <h2 className="text-xl font-bold">Inicia sesión para continuar</h2>
-              <p className="text-muted-foreground">Necesitas una cuenta para crear denuncias</p>
+              <h2 className="text-xl font-bold">
+                Inicia sesión para continuar
+              </h2>
+              <p className="text-muted-foreground">
+                Necesitas una cuenta para crear denuncias
+              </p>
             </div>
             <div className="flex gap-3 justify-center">
               <Button asChild>
@@ -133,7 +166,7 @@ export default function NuevaDenunciaPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (success) {
@@ -148,27 +181,37 @@ export default function NuevaDenunciaPage() {
             </div>
             <div className="space-y-2">
               <h2 className="text-2xl font-bold">Denuncia Enviada</h2>
-              <p className="text-muted-foreground">Tu reporte ha sido registrado exitosamente.</p>
-              <p className="text-sm text-muted-foreground">Las autoridades lo revisarán pronto.</p>
+              <p className="text-muted-foreground">
+                Tu reporte ha sido registrado exitosamente.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Las autoridades lo revisarán pronto.
+              </p>
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Nueva Denuncia</h1>
-          <p className="text-muted-foreground text-lg">Reporta un problema urbano en tu comunidad</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            Nueva Denuncia
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Reporta un problema urbano en tu comunidad
+          </p>
         </div>
 
         <Card>
           <CardHeader>
             <CardTitle>Información del Problema</CardTitle>
-            <CardDescription>Completa todos los campos para ayudarnos a resolver el problema</CardDescription>
+            <CardDescription>
+              Completa todos los campos para ayudarnos a resolver el problema
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -224,7 +267,8 @@ export default function NuevaDenunciaPage() {
                   className="resize-none"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Incluye detalles como tamaño, tiempo que lleva el problema, etc.
+                  Incluye detalles como tamaño, tiempo que lleva el problema,
+                  etc.
                 </p>
               </div>
 
@@ -251,11 +295,14 @@ export default function NuevaDenunciaPage() {
                   className="w-full bg-transparent"
                 >
                   <Navigation className="h-4 w-4 mr-2" />
-                  {isGettingLocation ? "Obteniendo ubicación..." : "Usar mi ubicación actual"}
+                  {isGettingLocation
+                    ? "Obteniendo ubicación..."
+                    : "Usar mi ubicación actual"}
                 </Button>
                 {formData.ubicacion && (
                   <p className="text-xs text-muted-foreground">
-                    Coordenadas: {formData.ubicacion.lat.toFixed(6)}, {formData.ubicacion.lng.toFixed(6)}
+                    Coordenadas: {formData.ubicacion.lat.toFixed(6)},{" "}
+                    {formData.ubicacion.lng.toFixed(6)}
                   </p>
                 )}
               </div>
@@ -274,9 +321,13 @@ export default function NuevaDenunciaPage() {
                   <label htmlFor="imagen" className="cursor-pointer">
                     <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm font-medium">
-                      {formData.imagen ? formData.imagen.name : "Haz clic para subir una imagen"}
+                      {formData.imagen
+                        ? formData.imagen.name
+                        : "Haz clic para subir una imagen"}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">PNG, JPG hasta 10MB</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      PNG, JPG hasta 10MB
+                    </p>
                   </label>
                 </div>
               </div>
@@ -285,7 +336,12 @@ export default function NuevaDenunciaPage() {
                 <Button type="submit" className="flex-1" disabled={isLoading}>
                   {isLoading ? "Enviando..." : "Enviar Denuncia"}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => router.back()} disabled={isLoading}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.back()}
+                  disabled={isLoading}
+                >
                   Cancelar
                 </Button>
               </div>
@@ -294,5 +350,5 @@ export default function NuevaDenunciaPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

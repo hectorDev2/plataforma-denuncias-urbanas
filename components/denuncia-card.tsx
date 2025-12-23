@@ -22,12 +22,17 @@ export function DenunciaCard({ denuncia }: DenunciaCardProps) {
     color: "bg-gray-400",
   };
 
+  // Si la imagen es relativa (empieza con /uploads), prepende el dominio del backend
+  let imageUrl = denuncia.imagen;
+  if (imageUrl && imageUrl.startsWith("/uploads")) {
+    imageUrl = `http://localhost:3000${imageUrl}`;
+  }
   return (
     <Link href={`/denuncias/${denuncia.id}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
         <div className="relative h-48 w-full bg-muted">
           <Image
-            src={denuncia.imagen || "/placeholder.svg"}
+            src={imageUrl || "/placeholder.svg"}
             alt={denuncia.titulo || "Denuncia"}
             fill
             className="object-cover"
