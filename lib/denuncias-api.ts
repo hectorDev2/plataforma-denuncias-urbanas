@@ -1,6 +1,11 @@
 import { API_URL } from "./api";
 
-export async function crearDenuncia({ title, description, category, image }: {
+export async function crearDenuncia({
+  title,
+  description,
+  category,
+  image,
+}: {
   title: string;
   description: string;
   category: string;
