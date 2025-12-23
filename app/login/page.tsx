@@ -34,7 +34,7 @@ export default function LoginPage() {
     if (success) {
       router.push("/")
     } else {
-      setError("Credenciales incorrectas o no validas. Intenta con: juan@email.com o carlos@gobierno.gob (Cuentas de prueba)")
+      setError("Credenciales incorrectas o no validas. Intenta con las cuentas de prueba mostradas abajo.")
     }
 
     setIsLoading(false)
@@ -113,11 +113,11 @@ export default function LoginPage() {
               <div className="space-y-2 text-sm">
                 <div className="p-3 rounded-lg bg-muted">
                   <p className="font-medium">Ciudadano:</p>
-                  <p className="text-muted-foreground">juan@email.com</p>
+                  <p className="text-muted-foreground">rosa.huaman@gmail.com</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted">
                   <p className="font-medium">Autoridad:</p>
-                  <p className="text-muted-foreground">carlos@gobierno.gob</p>
+                  <p className="text-muted-foreground">lcondori@municusco.gob.pe</p>
                 </div>
               </div>
             </div>
@@ -132,6 +132,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-    
+
   )
 }
