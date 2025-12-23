@@ -12,17 +12,22 @@ export async function getDenuncias() {
     id: String(d.id),
     titulo: d.title,
     descripcion: d.description,
-    categoria: (d.category || '').toLowerCase(),
-    estado: (d.status || '').toLowerCase().replace('pending', 'pendiente').replace('resolved', 'resuelta').replace('rejected', 'rechazada').replace('in_review', 'en-revision'),
+    categoria: (d.category || "").toLowerCase(),
+    estado: (d.status || "")
+      .toLowerCase()
+      .replace("pending", "pendiente")
+      .replace("resolved", "resuelta")
+      .replace("rejected", "rechazada")
+      .replace("in_review", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
       lat: d.lat,
       lng: d.lng,
-      direccion: '', // No hay dirección en la respuesta, puedes adaptarlo si tu backend la provee
+      direccion: "", // No hay dirección en la respuesta, puedes adaptarlo si tu backend la provee
     },
     imagen: d.imageUrl,
     ciudadanoId: String(d.userId),
-    ciudadanoNombre: d.user?.name || 'Anónimo',
+    ciudadanoNombre: d.user?.name || "Anónimo",
   }));
 }
 // helpers/api.ts
