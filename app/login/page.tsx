@@ -1,45 +1,48 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/lib/auth-context"
-import { MapPin, AlertCircle } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/lib/auth-context";
+import { MapPin, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
-
-    // Simulación de delay de red
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    const success = login(email, password)
-
-    if (success) {
-      router.push("/")
-    } else {
-      setError("Credenciales incorrectas o no validas. Intenta con: juan@email.com o carlos@gobierno.gob (Cuentas de prueba)")
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+    try {
+      const success = await login(email, password);
+      if (success) {
+        router.push("/");
+      } else {
+        setError("Credenciales incorrectas o no válidas.");
+      }
+    } catch (err) {
+      setError("Error de red o del servidor.");
     }
-
-    setIsLoading(false)
-  }
-
+    setIsLoading(false);
+  };
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 bg-muted/30">
@@ -52,13 +55,17 @@ export default function LoginPage() {
             </div>
           </div>
           <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
-          <p className="text-muted-foreground">Accede a tu cuenta de Denuncias Urbanas</p>
+          <p className="text-muted-foreground">
+            Accede a tu cuenta de Denuncias Urbanas
+          </p>
         </div>
 
         <Card>
           <CardHeader>
             <CardTitle>Bienvenido de nuevo</CardTitle>
-            <CardDescription>Ingresa tus credenciales para continuar</CardDescription>
+            <CardDescription>
+              Ingresa tus credenciales para continuar
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -106,7 +113,9 @@ export default function LoginPage() {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Cuentas de prueba</span>
+                  <span className="bg-card px-2 text-muted-foreground">
+                    Cuentas de prueba
+                  </span>
                 </div>
               </div>
 
@@ -126,12 +135,14 @@ export default function LoginPage() {
 
         <div className="text-center text-sm">
           <span className="text-muted-foreground">¿No tienes una cuenta? </span>
-          <Link href="/registro" className="text-primary hover:underline font-medium">
+          <Link
+            href="/registro"
+            className="text-primary hover:underline font-medium"
+          >
             Regístrate aquí
           </Link>
         </div>
       </div>
     </div>
-    
-  )
+  );
 }
