@@ -13,7 +13,7 @@ import { login as apiLogin, register as apiRegister, getMe } from "./api";
 interface AuthContextType {
   usuario: Usuario | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<Usuario | null>;
   register: (data: {
     name: string;
     email: string;
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<Usuario | null> => {
     try {
       const res = await apiLogin({ email, password });
       if (res && res.access_token) {
@@ -55,11 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("access_token", res.access_token);
         const user = await getMe(res.access_token);
         setUsuario(user);
-        return true;
+        return user;
       }
-      return false;
+      return null;
     } catch (e) {
-      return false;
+      return null;
     }
   };
 

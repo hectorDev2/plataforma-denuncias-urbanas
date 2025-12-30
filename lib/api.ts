@@ -130,5 +130,10 @@ export async function getMe(token: string) {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("No autenticado");
-  return res.json();
+  const data = await res.json();
+  // Map backend roles to frontend types
+  return {
+    ...data,
+    rol: data.role === "authority" ? "autoridad" : "ciudadano",
+  };
 }

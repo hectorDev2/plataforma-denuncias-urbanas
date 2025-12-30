@@ -32,9 +32,13 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
     try {
-      const success = await login(email, password);
-      if (success) {
-        router.push("/");
+      const user = await login(email, password);
+      if (user) {
+        if (user.rol === "autoridad") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       } else {
         setError("Credenciales incorrectas o no válidas.");
       }
