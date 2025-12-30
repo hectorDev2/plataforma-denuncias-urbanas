@@ -83,6 +83,72 @@ Este documento describe de forma concisa las rutas, componentes, APIs, tipos y f
   - `PATCH /denuncias/:id/status` → actualizar estado
   - `GET /denuncias/stats/dashboard` → estadísticas
 
+**API Endpoints & Specification (usado por la app)**
+
+1. Authentication (/auth)
+   - Login: `POST /auth/login`
+     - Body: `{ "email": "user@example.com", "password": "password123" }`
+     - Response: `{ "access_token": "eyJhbG..." }` (la app guarda esto en `localStorage` como `access_token`).
+   - Register: `POST /auth/register`
+     - Body: `{ "email": "...", "name": "...", "password": "..." }`
+   - Get Profile: `GET /auth/me`
+     - Headers: `Authorization: Bearer <token>`
+     - Response: detalles del usuario (id, email, role, etc.).
+   - Forgot Password: `POST /auth/forgot-password`
+     - Body: `{ "email": "user@example.com" }`
+     - Response: `{ "message": "If the email is valid..." }`
+   - Reset Password: `POST /auth/reset-password`
+     - Body: `{ "token": "TOKEN_FROM_EMAIL", "password": "newPassword123" }`
+
+2. Complaints / Denuncias (/denuncias)
+   - List All: `GET /denuncias?status=pending&category=basura`
+     - Params (opcional): `status` (pending, in_progress, resolved), `category`.
+     - Public access: sí.
+   - Create Complaint: `POST /denuncias`
+     - Headers: `Authorization: Bearer <token>` (si el usuario está autenticado)
+     - Content-Type: `multipart/form-data`
+     - Body (FormData): `title`, `description`, `category`, `lat`, `lng`, `address` (opt), `image` (File, opcional, max 1)
+   - Get Individual: `GET /denuncias/:id`
+   - List My Complaints: `GET /denuncias/usuario/:userId`
+   - Update Status (Admin/Authority Only): `PATCH /denuncias/:id/status`
+     - Body: `{ "status": "in_progress" }` (o `resolved`)
+   - Delete: `DELETE /denuncias/:id` (User puede borrar las propias; Admin puede borrar cualquiera)
+
+3. Admin & Stats
+   - Admin Stats: `GET /stats/dashboard` (Admin only)
+     - Returns: contadores globales (total denuncias, por estado, por categoría) y stats de usuarios.
+   - Manage Users (Admin only):
+     - `GET /users`
+     - `PATCH /users/:id/role` body `{ "role": "authority" }`
+     - `PATCH /users/:id/status` body `{ "status": "blocked" }`
+     - `DELETE /users/:id`
+
+**Frontend Requirements (implementadas / recomendaciones)**
+- Tech Stack: Next.js + React (ya en el repo).
+- Diseño: colores institucionales (azules, blancos, grises) en los componentes UI del repo.
+- Componentes: formularios de Login/Register/Forgot con validación; dashboard con vistas por rol.
+- Map Integration: componentes `LocationMap` / `DenunciaMapWrapper` usan Leaflet (ya incluido en componentes).
+
+Key Logic implementado:
+- JWT Handling: creado `lib/fetcher.ts` que añade `Authorization: Bearer <token>` desde `localStorage` automáticamente y intercepta respuestas `401` para limpiar token y redirigir a `/login`.
+- Role Protection: `AuthProvider` (`lib/auth-context.tsx`) mapea rol del backend (`authority`) a `autoridad` y los componentes usan `usuario?.rol` para condicionales (ej. mostrar controles admin).
+- Image Handling: si la imagen devuelve una ruta relativa que empieza con `/uploads`, los componentes la prefijen con `http://localhost:3000` (ahora configurado vía `NEXT_PUBLIC_API_URL` en `lib/config.ts`).
+
+Configuración añadida:
+- `lib/config.ts`: variable `API_URL` ahora viene de `process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'`.
+- `lib/fetcher.ts`: helper central para peticiones API con manejo de token/401.
+
+Flujo de contraseña olvidada:
+- Usuario solicita reset en `/forgot-password` (POST `/auth/forgot-password`).
+- Backend envía email con link `/reset-password?token=XYZ`.
+- Usuario accede y hace `POST /auth/reset-password` con `{ token, password }`.
+
+Si quieres, puedo:
+- Añadir una página `/forgot-password` y `/reset-password` con el flujo completo.
+- Forzar protección de rutas `/admin` con redirección basada en `usuario.rol`.
+- Añadir validación de tamaño de imagen en cliente (p. ej. 5MB max) antes de subir.
+
+
 **Variables de entorno y configuración**
 - Actualmente `lib/api.ts` usa `API_URL` constante. Para despliegue es recomendable reemplazarlo por `process.env.NEXT_PUBLIC_API_URL` o similar.
 - Token: la app espera `access_token` en `localStorage` para acciones autenticadas.
