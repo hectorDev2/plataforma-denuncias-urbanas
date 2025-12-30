@@ -22,9 +22,10 @@ interface DenunciaDetallePageProps {
 export default async function DenunciaDetallePage({
   params,
 }: DenunciaDetallePageProps) {
+  const { id } = await params;
   let denuncia: Denuncia | null = null;
   try {
-    denuncia = await getDenunciaPorId(params.id);
+    denuncia = await getDenunciaPorId(id);
   } catch {
     notFound();
   }
@@ -33,7 +34,6 @@ export default async function DenunciaDetallePage({
   }
 
   // Next.js 15: params puede ser una promesa
-  const resolvedParams = await params;
   const categoriaInfo = categoriasConfig[denuncia.categoria] || {
     label: denuncia.categoria,
     color: "bg-gray-400",
@@ -257,6 +257,6 @@ export default async function DenunciaDetallePage({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
