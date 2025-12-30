@@ -73,6 +73,12 @@ export default function NuevaDenunciaPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validación de tamaño: máximo 10MB
+      const MAX_MB = 10;
+      if (file.size > MAX_MB * 1024 * 1024) {
+        setError(`La imagen excede el tamaño máximo de ${MAX_MB}MB`);
+        return;
+      }
       handleChange("imagen", file);
     }
   };
@@ -255,7 +261,10 @@ export default function NuevaDenunciaPage() {
                   onValueChange={(value) => handleChange("categoria", value)}
                   disabled={isLoading}
                 >
-                  <SelectTrigger id="categoria" className="!bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0">
+                  <SelectTrigger
+                    id="categoria"
+                    className="!bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0"
+                  >
                     <SelectValue placeholder="Selecciona una categoría" />
                   </SelectTrigger>
                   <SelectContent>
@@ -323,13 +332,15 @@ export default function NuevaDenunciaPage() {
                         ...formData.ubicacion,
                         lat,
                         lng,
-                        direccion: formData.direccion // Keep existing address or fetch newer one if we had reverse geocoding
+                        direccion: formData.direccion, // Keep existing address or fetch newer one if we had reverse geocoding
                       } as Ubicacion);
                     }}
                   />
                   <p className="text-xs text-muted-foreground mt-2">
                     Arrastra el marcador para precisar la ubicación.
-                    Coordenadas: {formData.ubicacion?.lat.toFixed(6) || "19.432600"}, {formData.ubicacion?.lng.toFixed(6) || "-99.133200"}
+                    Coordenadas:{" "}
+                    {formData.ubicacion?.lat.toFixed(6) || "19.432600"},{" "}
+                    {formData.ubicacion?.lng.toFixed(6) || "-99.133200"}
                   </p>
                 </div>
               </div>
