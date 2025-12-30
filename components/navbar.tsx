@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Menu, X, MapPin, User, LogOut } from "lucide-react"
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -63,6 +64,7 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             {isAuthenticated ? (
               <>
                 <div className="flex items-center gap-2 text-sm">
@@ -106,6 +108,10 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <div className="flex items-center justify-between py-2 border-t mt-2 pt-2">
+              <span className="text-sm font-medium text-muted-foreground">Tema</span>
+              <ThemeToggle />
+            </div>
             <div className="pt-3 border-t space-y-2">
               {isAuthenticated ? (
                 <>
