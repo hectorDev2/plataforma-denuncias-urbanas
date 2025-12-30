@@ -70,7 +70,7 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete }: Denunci
   return (
     <div className="relative group">
       <Link href={`/denuncias/${denuncia.id}`} className="block h-full">
-        <Card className="overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full flex flex-col border-none shadow-md">
+        <Card className="overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full flex flex-col border-white/40 bg-white/60 backdrop-blur-md shadow-md">
           <div className="relative aspect-video w-full bg-muted">
             <Image
               src={imageUrl || "/placeholder.svg"}
