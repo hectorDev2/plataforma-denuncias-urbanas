@@ -1,4 +1,4 @@
-import { API_URL } from "./api";
+import { apiFetch } from "./fetcher";
 
 export async function crearDenuncia({
   title,
@@ -26,11 +26,8 @@ export async function crearDenuncia({
   if (lng) formData.append("lng", lng.toString());
   if (address) formData.append("address", address);
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-  const res = await fetch(`${API_URL}/denuncias`, {
+  const res = await apiFetch(`/denuncias`, {
     method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: formData,
   });
   if (!res.ok) {
@@ -41,11 +38,8 @@ export async function crearDenuncia({
 }
 
 export async function eliminarDenuncia(id: string | number) {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-  const res = await fetch(`${API_URL}/denuncias/${id}`, {
+  const res = await apiFetch(`/denuncias/${id}`, {
     method: "DELETE",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
 
   if (!res.ok) {
@@ -54,26 +48,24 @@ export async function eliminarDenuncia(id: string | number) {
   return res.json();
 }
 
-export async function actualizarEstadoDenuncia(id: string | number, estado: string) {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-
+export async function actualizarEstadoDenuncia(
+  id: string | number,
+  estado: string
+) {
   // Map frontend status to backend status
   const statusMap: Record<string, string> = {
-    "pendiente": "Pending",
+    pendiente: "Pending",
     "en-revision": "In Progress",
-    "resuelta": "Resolved",
-
+    resuelta: "Resolved",
   };
 
   const backendStatus = statusMap[estado];
   if (!backendStatus) throw new Error("Estado no válido");
 
-  const res = await fetch(`${API_URL}/denuncias/${id}/status`, {
+  const res = await apiFetch(`/denuncias/${id}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
     },
     body: JSON.stringify({ status: backendStatus }),
   });
