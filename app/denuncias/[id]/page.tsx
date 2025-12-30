@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { MapComponent } from "@/components/map-component";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { categoriasConfig, estadosConfig } from "@/data/mock-data";
 import { getDenunciaPorId } from "@/lib/api";
 import type { Denuncia } from "@/lib/types";
@@ -13,6 +14,16 @@ import type { Denuncia } from "@/lib/types";
 import { MapPin, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import dynamic from "next/dynamic";
+
+const LocationMap = dynamic(() => import("@/components/LocationMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[300px] w-full bg-muted animate-pulse rounded-md flex items-center justify-center">
+      <p className="text-muted-foreground">Cargando mapa...</p>
+    </div>
+  ),
+});
 
 interface DenunciaDetallePageProps {
   params: { id: string };
@@ -74,9 +85,8 @@ export default async function DenunciaDetallePage({
                 denuncia.imagen
                   ? denuncia.imagen.startsWith("http")
                     ? denuncia.imagen
-                    : `http://localhost:3000${
-                        denuncia.imagen.startsWith("/") ? "" : "/"
-                      }${denuncia.imagen}`
+                    : `http://localhost:3000${denuncia.imagen.startsWith("/") ? "" : "/"
+                    }${denuncia.imagen}`
                   : "/placeholder.svg"
               }
               alt={denuncia.titulo}
@@ -224,14 +234,14 @@ export default async function DenunciaDetallePage({
                   <p className="text-muted-foreground">
                     Lat:{" "}
                     {typeof denuncia.ubicacion.lat === "number" &&
-                    !isNaN(denuncia.ubicacion.lat)
+                      !isNaN(denuncia.ubicacion.lat)
                       ? denuncia.ubicacion.lat.toFixed(6)
                       : "N/A"}
                   </p>
                   <p className="text-muted-foreground">
                     Lng:{" "}
                     {typeof denuncia.ubicacion.lng === "number" &&
-                    !isNaN(denuncia.ubicacion.lng)
+                      !isNaN(denuncia.ubicacion.lng)
                       ? denuncia.ubicacion.lng.toFixed(6)
                       : "N/A"}
                   </p>
@@ -240,7 +250,21 @@ export default async function DenunciaDetallePage({
             </CardContent>
           </Card>
 
-          <MapComponent ubicacion={denuncia.ubicacion} className="h-[300px]" />
+          <div className="h-[300px] w-full rounded-md overflow-hidden">
+            {denuncia.ubicacion &&
+              typeof denuncia.ubicacion.lat === 'number' &&
+              typeof denuncia.ubicacion.lng === 'number' ? (
+              <LocationMap
+                lat={denuncia.ubicacion.lat}
+                lng={denuncia.ubicacion.lng}
+                readonly={true}
+              />
+            ) : (
+              <div className="h-full w-full bg-muted flex items-center justify-center">
+                <p className="text-muted-foreground">Sin ubicación registrada</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

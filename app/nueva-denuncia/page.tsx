@@ -34,6 +34,16 @@ import {
   Navigation,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import dynamic from "next/dynamic";
+
+const LocationMap = dynamic(() => import("@/components/LocationMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[300px] w-full bg-muted animate-pulse rounded-md flex items-center justify-center">
+      <p className="text-muted-foreground">Cargando mapa...</p>
+    </div>
+  ),
+});
 
 export default function NuevaDenunciaPage() {
   const { isAuthenticated, usuario } = useAuth();
@@ -129,6 +139,8 @@ export default function NuevaDenunciaPage() {
         description: formData.descripcion,
         category: formData.categoria,
         image: formData.imagen!,
+        lat: formData.ubicacion?.lat,
+        lng: formData.ubicacion?.lng,
       });
       setSuccess(true);
       setIsLoading(false);
@@ -299,12 +311,25 @@ export default function NuevaDenunciaPage() {
                     ? "Obteniendo ubicación..."
                     : "Usar mi ubicación actual"}
                 </Button>
-                {formData.ubicacion && (
-                  <p className="text-xs text-muted-foreground">
-                    Coordenadas: {formData.ubicacion.lat.toFixed(6)},{" "}
-                    {formData.ubicacion.lng.toFixed(6)}
+
+                <div className="mt-4">
+                  <LocationMap
+                    lat={formData.ubicacion?.lat || 19.4326}
+                    lng={formData.ubicacion?.lng || -99.1332}
+                    onLocationSelect={(lat, lng) => {
+                      handleChange("ubicacion", {
+                        ...formData.ubicacion,
+                        lat,
+                        lng,
+                        direccion: formData.direccion // Keep existing address or fetch newer one if we had reverse geocoding
+                      } as Ubicacion);
+                    }}
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Arrastra el marcador para precisar la ubicación.
+                    Coordenadas: {formData.ubicacion?.lat.toFixed(6) || "19.432600"}, {formData.ubicacion?.lng.toFixed(6) || "-99.133200"}
                   </p>
-                )}
+                </div>
               </div>
 
               <div className="space-y-2">
