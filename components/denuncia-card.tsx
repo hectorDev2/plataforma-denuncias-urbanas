@@ -71,16 +71,18 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete }: Denunci
     <div className="relative group">
       <Link href={`/denuncias/${denuncia.id}`} className="block h-full">
         <Card className="overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full flex flex-col border-white/40 bg-white/60 backdrop-blur-md shadow-md">
-          <div className="relative aspect-video w-full bg-muted">
-            <Image
-              src={imageUrl || "/placeholder.svg"}
-              alt={denuncia.titulo || "Denuncia"}
-              fill
-              className="object-cover transition-transform duration-500 hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            <div className="absolute top-3 right-3 flex gap-2">
-              <Badge className={estadoInfo.color}>{estadoInfo.label}</Badge>
+          <div className="p-3">
+            <div className="relative aspect-video w-full bg-muted rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src={imageUrl || "/placeholder.svg"}
+                alt={denuncia.titulo || "Denuncia"}
+                fill
+                className="object-cover transition-transform duration-500 hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute top-3 right-3 flex gap-2">
+                <Badge className={estadoInfo.color}>{estadoInfo.label}</Badge>
+              </div>
             </div>
           </div>
 
