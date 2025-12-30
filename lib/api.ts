@@ -172,13 +172,13 @@ export async function getDashboardStats() {
     resueltas: d.byStatus["Resolved"] || 0,
     rechazadas: d.byStatus["Rejected"] || 0,
     porCategoria: {
-      bache: d.byCategory["bache"] || 0,
-      basura: d.byCategory["basura"] || 0,
-      alumbrado: d.byCategory["alumbrado"] || 0,
-      semaforo: d.byCategory["semaforo"] || 0,
-      alcantarilla: d.byCategory["alcantarilla"] || 0,
-      grafiti: d.byCategory["grafiti"] || 0,
-      otro: d.byCategory["otro"] || 0,
+      bache: (d.byCategory["bache"] || 0),
+      basura: (d.byCategory["basura"] || 0),
+      alumbrado: (d.byCategory["alumbrado"] || 0),
+      semaforo: (d.byCategory["semaforo"] || 0),
+      alcantarilla: (d.byCategory["alcantarilla"] || 0),
+      grafiti: (d.byCategory["grafiti"] || 0) + (d.byCategory["graffiti"] || 0),
+      otro: (d.byCategory["otro"] || 0),
     },
   };
   return stats;

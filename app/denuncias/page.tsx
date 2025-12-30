@@ -29,7 +29,9 @@ export default function DenunciasPage() {
     setLoading(true);
     getDenuncias()
       .then((data) => {
-        setDenuncias(data);
+        // Sort by date ascending (oldest first)
+        const sortedData = data.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+        setDenuncias(sortedData);
         setLoading(false);
       })
       .catch(() => {
