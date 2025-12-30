@@ -1,20 +1,61 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/stat-card"
 import { DenunciaCard } from "@/components/denuncia-card"
-import { calcularEstadisticas, obtenerDenunciasPorEstado } from "@/lib/estadisticas"
+import { getDashboardStats, getDenuncias } from "@/lib/api"
 import { categoriasConfig } from "@/data/mock-data"
-import { FileText, Clock, CheckCircle2, XCircle, TrendingUp, AlertCircle, BarChart3 } from "lucide-react"
+import { FileText, Clock, CheckCircle2, XCircle, TrendingUp, AlertCircle, BarChart3, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from "recharts"
+import type { Estadisticas, Denuncia } from "@/lib/types"
 
 export default function DashboardPage() {
   const { usuario, isAuthenticated } = useAuth()
-  const [selectedView, setSelectedView] = useState<"overview" | "pending">("overview")
+  const [stats, setStats] = useState<Estadisticas>({
+    total: 0,
+    pendientes: 0,
+    enRevision: 0,
+    resueltas: 0,
+    rechazadas: 0,
+    porCategoria: {
+      bache: 0,
+      basura: 0,
+      alumbrado: 0,
+      semaforo: 0,
+      alcantarilla: 0,
+      grafiti: 0,
+      otro: 0,
+    },
+  });
+  const [denunciasPendientes, setDenunciasPendientes] = useState<Denuncia[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    async function cargarDatos() {
+      if (!isAuthenticated || usuario?.rol !== "autoridad") return;
+
+      try {
+        const [statsData, pendientesData] = await Promise.all([
+          getDashboardStats(),
+          getDenuncias({ estado: "pendiente" })
+        ]);
+
+        setStats(statsData);
+        setDenunciasPendientes(pendientesData);
+      } catch (error) {
+        console.error("Error cargando dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    cargarDatos();
+  }, [isAuthenticated, usuario]);
 
   if (!isAuthenticated || usuario?.rol !== "autoridad") {
     return (
@@ -37,13 +78,20 @@ export default function DashboardPage() {
     )
   }
 
-  const stats = calcularEstadisticas()
-  const denunciasPendientes = obtenerDenunciasPorEstado("pendiente")
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-muted-foreground">Cargando dashboard...</span>
+      </div>
+    );
+  }
+
   const tasaResolucion = stats.total > 0 ? Math.round((stats.resueltas / stats.total) * 100) : 0
 
   // Datos para gráficos
   const dataCategoria = Object.entries(stats.porCategoria).map(([key, value]) => ({
-    name: categoriasConfig[key as keyof typeof categoriasConfig].label,
+    name: categoriasConfig[key as keyof typeof categoriasConfig]?.label || key,
     cantidad: value,
   }))
 
@@ -208,17 +256,28 @@ export default function DashboardPage() {
               <CardTitle>Denuncias Pendientes</CardTitle>
               <CardDescription>Requieren atención inmediata</CardDescription>
             </div>
-            <Button variant="outline" asChild>
-              <Link href="/denuncias">Ver Todas</Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowAll(!showAll)}
+              >
+                {showAll ? "Ver Menos" : "Ver Todas"}
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/denuncias">Ir al listado completo</Link>
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
           {denunciasPendientes.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {denunciasPendientes.slice(0, 3).map((denuncia) => (
-                <DenunciaCard key={denuncia.id} denuncia={denuncia} />
-              ))}
+              {denunciasPendientes
+                .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+                .slice(0, showAll ? undefined : 6)
+                .map((denuncia) => (
+                  <DenunciaCard key={denuncia.id} denuncia={denuncia} />
+                ))}
             </div>
           ) : (
             <div className="text-center py-8">

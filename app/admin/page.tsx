@@ -61,6 +61,7 @@ export default function AdminDashboardPage() {
     const [denunciasPendientes, setDenunciasPendientes] = useState<Denuncia[]>([]);
     const [denunciasEnRevision, setDenunciasEnRevision] = useState<Denuncia[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showAll, setShowAll] = useState(false);
 
     useEffect(() => {
         async function cargarDatos() {
@@ -307,16 +308,25 @@ export default function AdminDashboardPage() {
                                 Monitoreo en tiempo real de reportes ciudadanos
                             </CardDescription>
                         </div>
-                        <Button variant="outline" asChild>
-                            <Link href="/denuncias">Ver Todas</Link>
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setShowAll(!showAll)}
+                            >
+                                {showAll ? "Ver Menos" : "Ver Todas"}
+                            </Button>
+                            <Button variant="outline" asChild>
+                                <Link href="/denuncias">Ir al listado completo</Link>
+                            </Button>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
                     {denunciasPendientes.length > 0 || denunciasEnRevision.length > 0 ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {[...denunciasPendientes, ...denunciasEnRevision]
-                                .slice(0, 3)
+                                .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+                                .slice(0, showAll ? undefined : 6)
                                 .map((denuncia) => (
                                     <DenunciaCard key={denuncia.id} denuncia={denuncia} />
                                 ))}
