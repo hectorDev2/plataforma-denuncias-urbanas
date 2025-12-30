@@ -1,0 +1,107 @@
+# Resumen de Funcionalidades — Plataforma de Denuncias Urbanas
+
+Este documento describe de forma concisa las rutas, componentes, APIs, tipos y flujos principales implementados en la aplicación.
+
+**Resumen general:**
+- Aplicación Next.js para reportar y gestionar denuncias urbanas.
+- Soporta registro/inicio de sesión, crear denuncias con foto y ubicación, listar/filtrar denuncias, vista en mapa, y panel para autoridades.
+
+**Rutas / Páginas (carpeta `app/`)**
+- `/` ([app/page.tsx]): Landing con estadísticas y listado rápido de denuncias.
+- `/denuncias` ([app/denuncias/page.tsx]): Listado principal con buscador, filtros (categoría, estado), y toggle grid/map.
+- `/denuncias/[id]` ([app/denuncias/[id]/page.tsx]): Detalle de una denuncia individual. (Existe la ruta en estructura).
+- `/nueva-denuncia` ([app/nueva-denuncia/page.tsx]): Formulario para crear una denuncia (imagen + ubicación + categoría + descripción). Requiere autenticación.
+- `/mis-denuncias` ([app/mis-denuncias/page.tsx]): Listado de denuncias del usuario autenticado.
+- `/login` ([app/login/page.tsx]) y `/registro` ([app/registro/page.tsx]): Autenticación y registro.
+- `/admin` y `/dashboard` ([app/admin/page.tsx], [app/dashboard/page.tsx]): Vistas administrativas / estadísticas.
+
+**Componentes clave (carpeta `components/`)**
+- `DenunciaCard` (`components/denuncia-card.tsx`): Tarjeta que muestra título, imagen, estado, categoría, fecha, dirección y autor. Soporta:
+  - Props: `denuncia: Denuncia`, `showDelete?: boolean`, `showAdminControls?: boolean`, `onDelete?: ()=>void`, `onAction?: ()=>void`.
+  - Acciones: eliminar denuncia (usa `eliminarDenuncia`), cambiar estado (usa `actualizarEstadoDenuncia`), y navegación al detalle.
+
+- `DenunciasMapView` (`components/denuncias-map-view.tsx`): Vista compuesta mapa + lista. Prop: `denuncias: Denuncia[]`. Muestra marcador simulado y detalle seleccionado.
+
+- `LocationMap` (`components/LocationMap.tsx`) y `DenunciaMapWrapper` (`components/DenunciaMapWrapper.tsx`): componentes de mapa para seleccionar/mostrar ubicación (cargados dinámicamente en formularios).
+
+- `location-picker.tsx` / `map-component.tsx`: utilidades visuales para selección de ubicación y render de mapas.
+
+- `denuncia-controls.tsx`: controles para acciones sobre una denuncia (posible soporte a nivel de UI).
+
+- `navbar.tsx`, `footer.tsx` y `theme-provider.tsx`: layout y manejo de tema.
+
+- `components/ui/*`: conjunto de componentes UI reutilizables (Button, Input, Select, Card, AlertDialog, DropdownMenu, Toast, etc.) usados por la app.
+
+**Hooks y contexto**
+- `useAuth` / `AuthProvider` (`lib/auth-context.tsx`): contexto de autenticación.
+  - `login(email,password)` llama a `login` en `lib/api.ts` y guarda `access_token` en `localStorage`.
+  - `register({name,email,password})` usa `api.register`.
+  - `logout()` limpia token y usuario.
+  - Provee `usuario`, `token`, `isAuthenticated`.
+
+- `hooks/use-mobile.ts` y `components/ui/use-mobile.tsx`: hooks utilitarios para detectar dispositivo móvil.
+- `use-toast` wrapper para notificaciones (usa `sonner`).
+
+**APIs del cliente (carpeta `lib/`)**
+- `lib/api.ts`:
+  - `getDenuncias(filters?)` → Lista denuncias (adapta campos del backend a `Denuncia`).
+  - `getDenunciaPorId(id)` → Obtiene detalle y adapta campos.
+  - `getDenunciasPorUsuario(userId)` → Listado por usuario.
+  - `register`, `login`, `getMe` → Autenticación y obtención de perfil.
+  - `getDashboardStats()` → Estadísticas para dashboard.
+  - Nota: `API_URL` está hardcodeado a `http://localhost:3000` en este archivo.
+
+- `lib/denuncias-api.ts`:
+  - `crearDenuncia({title,description,category,image,lat,lng,address})` → Envia `FormData` al endpoint `/denuncias`. Añade header Authorization si `access_token` en localStorage.
+  - `eliminarDenuncia(id)` → DELETE `/denuncias/:id`.
+  - `actualizarEstadoDenuncia(id, estado)` → PATCH `/denuncias/:id/status` (mapea estados frontend -> backend).
+
+**Tipos** (`lib/types.ts`): `Denuncia`, `Usuario`, `Ubicacion`, `CategoriaDenuncia`, `EstadoDenuncia`, `Estadisticas`.
+
+**Datos de referencia**
+- `data/mock-data.ts`: definiciones de `categoriasConfig`, `estadosConfig` (labels, iconos, colores) usados por filtros y badges.
+
+**Flujos principales de la aplicación**
+- Crear denuncia (`/nueva-denuncia`): el usuario autenticado completa título, descripción, seleccione categoría, asigna ubicación (mapa o geolocalización) y sube una imagen. En `handleSubmit` se llama a `crearDenuncia`. En éxito redirige a `/mis-denuncias`.
+
+- Ver y filtrar denuncias (`/denuncias`): carga `getDenuncias()`, permite búsqueda por texto, filtrado por categoría y estado, y toggle entre `grid` y `map`. `DenunciasMapView` muestra un mapa interactivo.
+
+- Gestión para autoridades: en `DenunciaCard` se muestran controles admin si `usuario.rol === "autoridad"`. Pueden actualizar estado y eliminar denuncias.
+
+- Autenticación: `login`/`register` → guarda `access_token` en `localStorage`; `AuthProvider` usa `getMe(token)` para obtener perfil al cargar.
+
+**Integración con backend**
+- Endpoints esperados (según llamadas en `lib/`):
+  - `POST /auth/register` → registro
+  - `POST /auth/login` → login (retorna `access_token`)
+  - `GET /auth/me` → perfil
+  - `GET /denuncias` → listado (soporta query params `status` y `category`)
+  - `GET /denuncias/:id` → detalle
+  - `GET /denuncias/usuario/:id` → denuncias por usuario
+  - `POST /denuncias` → crear denuncia (FormData con image)
+  - `DELETE /denuncias/:id` → eliminar
+  - `PATCH /denuncias/:id/status` → actualizar estado
+  - `GET /denuncias/stats/dashboard` → estadísticas
+
+**Variables de entorno y configuración**
+- Actualmente `lib/api.ts` usa `API_URL` constante. Para despliegue es recomendable reemplazarlo por `process.env.NEXT_PUBLIC_API_URL` o similar.
+- Token: la app espera `access_token` en `localStorage` para acciones autenticadas.
+
+**Cómo probar localmente (resumen)**
+1. Instalar dependencias: `bun install` (o `pnpm install` según su entorno).
+2. Configurar variable `API_URL` o modificar `lib/api.ts` hacia el backend correcto.
+3. Ejecutar: `bun run dev`.
+4. Abrir `http://localhost:3000`.
+
+**Notas y recomendaciones**
+- Mejorar: mover `API_URL` a variables de entorno, manejo centralizado de errores, validaciones y límites de tamaño de imagen en cliente.
+- Considerar usar un proveedor de mapas real (Leaflet/Mapbox) en lugar de representaciones simuladas en `DenunciasMapView`.
+- Añadir tests para `lib/` y componentes clave.
+
+---
+Archivo generado automáticamente como guía de referencia de la aplicación. Si quieres, puedo:
+- Actualizar el `README.md` con un resumen y enlace a este documento (puedo hacerlo ahora).
+- Reemplazar `API_URL` por `process.env.NEXT_PUBLIC_API_URL` y agregar instrucciones de `.env`.
+- Generar documentación más detallada por componente (props, ejemplos).
+
+¿Qué quieres que haga a continuación? (p. ej. actualizar `README.md`, cambiar `API_URL`, o generar docs por componente).
