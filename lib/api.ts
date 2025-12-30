@@ -1,8 +1,9 @@
+import { apiFetch } from "./fetcher";
+import { API_URL } from "./config";
+
 // Obtener una denuncia por su ID
 export async function getDenunciaPorId(id: string | number) {
-  const res = await fetch(`${API_URL}/denuncias/${id}`, {
-    method: "GET",
-  });
+  const res = await apiFetch(`/denuncias/${id}`, { method: "GET" });
   if (!res.ok) throw new Error("Error al obtener la denuncia");
   const d = await res.json();
   return {
@@ -27,13 +28,11 @@ export async function getDenunciaPorId(id: string | number) {
     ciudadanoNombre: d.user?.name || "Anónimo",
   };
 }
-export const API_URL = "http://localhost:3000";
+// NOTE: API_URL ahora viene de `lib/config.ts`
 
 // Obtener denuncias de un usuario específico
 export async function getDenunciasPorUsuario(userId: string | number) {
-  const res = await fetch(`${API_URL}/denuncias/usuario/${userId}`, {
-    method: "GET",
-  });
+  const res = await apiFetch(`/denuncias/usuario/${userId}`, { method: "GET" });
   if (!res.ok) throw new Error("Error al obtener denuncias del usuario");
   const data = await res.json();
   return data.map((d: any) => ({
@@ -60,14 +59,17 @@ export async function getDenunciasPorUsuario(userId: string | number) {
 }
 
 // Obtener denuncias desde el backend
-export async function getDenuncias(filters?: { estado?: string; categoria?: string }) {
+export async function getDenuncias(filters?: {
+  estado?: string;
+  categoria?: string;
+}) {
   const params = new URLSearchParams();
 
   if (filters?.estado) {
     const statusMap: Record<string, string> = {
-      "pendiente": "Pending",
+      pendiente: "Pending",
       "en-revision": "In Progress",
-      "resuelta": "Resolved"
+      resuelta: "Resolved",
     };
     if (statusMap[filters.estado]) {
       params.append("status", statusMap[filters.estado]);
@@ -78,7 +80,7 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
     params.append("category", filters.categoria);
   }
 
-  const res = await fetch(`${API_URL}/denuncias?${params.toString()}`, {
+  const res = await apiFetch(`/denuncias?${params.toString()}`, {
     method: "GET",
   });
   if (!res.ok) throw new Error("Error al obtener denuncias");
@@ -117,7 +119,7 @@ export async function register({
   email: string;
   password: string;
 }) {
-  const res = await fetch(`${API_URL}/auth/register`, {
+  const res = await apiFetch(`/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email, password }),
@@ -133,7 +135,7 @@ export async function login({
   email: string;
   password: string;
 }) {
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const res = await apiFetch(`/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -142,8 +144,34 @@ export async function login({
   return res.json();
 }
 
+export async function forgotPassword(email: string) {
+  const res = await apiFetch(`/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Error al solicitar reseteo");
+  }
+  return res.json();
+}
+
+export async function resetPassword(token: string, password: string) {
+  const res = await apiFetch(`/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Error al restablecer la contraseña");
+  }
+  return res.json();
+}
+
 export async function getMe(token: string) {
-  const res = await fetch(`${API_URL}/auth/me`, {
+  const res = await apiFetch(`/auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("No autenticado");
@@ -157,9 +185,7 @@ export async function getMe(token: string) {
 
 // Obtener estadísticas del dashboard
 export async function getDashboardStats() {
-  const res = await fetch(`${API_URL}/denuncias/stats/dashboard`, {
-    method: "GET",
-  });
+  const res = await apiFetch(`/denuncias/stats/dashboard`, { method: "GET" });
   if (!res.ok) throw new Error("Error al obtener estadísticas");
   const d = await res.json();
 
