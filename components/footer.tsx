@@ -3,7 +3,7 @@ import { MapPin, Mail, Phone } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t bg-card mt-auto">
+    <footer className="border-t border-white/20 bg-white/40 backdrop-blur-md mt-auto shadow-sm">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}

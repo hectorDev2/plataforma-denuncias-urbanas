@@ -91,12 +91,12 @@ export default function DenunciasPage() {
               placeholder="Buscar por título, descripción o ubicación..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-white/50 border-white/40 focus:bg-white/80 transition-colors shadow-sm"
             />
           </div>
 
           <Select value={categoriaFilter} onValueChange={setCategoriaFilter}>
-            <SelectTrigger className="w-full md:w-[200px]">
+            <SelectTrigger className="w-full md:w-[200px] bg-white/50 border-white/40 focus:bg-white/80 transition-colors shadow-sm">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
@@ -111,7 +111,7 @@ export default function DenunciasPage() {
           </Select>
 
           <Select value={estadoFilter} onValueChange={setEstadoFilter}>
-            <SelectTrigger className="w-full md:w-[200px]">
+            <SelectTrigger className="w-full md:w-[200px] bg-white/50 border-white/40 focus:bg-white/80 transition-colors shadow-sm">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
@@ -135,18 +135,18 @@ export default function DenunciasPage() {
             {(searchTerm ||
               categoriaFilter !== "todas" ||
               estadoFilter !== "todos") && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSearchTerm("");
-                  setCategoriaFilter("todas");
-                  setEstadoFilter("todos");
-                }}
-              >
-                Limpiar filtros
-              </Button>
-            )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setCategoriaFilter("todas");
+                    setEstadoFilter("todos");
+                  }}
+                >
+                  Limpiar filtros
+                </Button>
+              )}
             <div className="flex border rounded-lg">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
