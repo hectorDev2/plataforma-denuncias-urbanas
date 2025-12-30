@@ -20,7 +20,7 @@ export async function getDenunciaPorId(id: string | number) {
     ubicacion: {
       lat: d.lat,
       lng: d.lng,
-      direccion: "",
+      direccion: d.address || "",
     },
     imagen: d.imageUrl,
     ciudadanoId: String(d.userId),
@@ -51,7 +51,7 @@ export async function getDenunciasPorUsuario(userId: string | number) {
     ubicacion: {
       lat: d.lat,
       lng: d.lng,
-      direccion: "",
+      direccion: d.address || "",
     },
     imagen: d.imageUrl,
     ciudadanoId: String(d.userId),
@@ -82,7 +82,7 @@ export async function getDenuncias() {
     ubicacion: {
       lat: d.lat,
       lng: d.lng,
-      direccion: "", // No hay dirección en la respuesta, puedes adaptarlo si tu backend la provee
+      direccion: d.address || "",
     },
     imagen: d.imageUrl,
     ciudadanoId: String(d.userId),

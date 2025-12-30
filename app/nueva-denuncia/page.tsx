@@ -141,6 +141,7 @@ export default function NuevaDenunciaPage() {
         image: formData.imagen!,
         lat: formData.ubicacion?.lat,
         lng: formData.ubicacion?.lng,
+        address: formData.ubicacion?.direccion ?? formData.direccion,
       });
       setSuccess(true);
       setIsLoading(false);

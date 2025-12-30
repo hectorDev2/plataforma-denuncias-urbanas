@@ -11,7 +11,7 @@ import Link from "next/link";
 
 export default function MisDenunciasPage() {
   const { usuario, isAuthenticated } = useAuth();
-  const [misDenuncias, setMisDenuncias] = useState([]);
+  const [misDenuncias, setMisDenuncias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -21,7 +21,8 @@ export default function MisDenunciasPage() {
       return;
     }
     // Usar userId, sub o id según lo que venga del backend
-    const userId = usuario.userId || usuario.sub || usuario.id;
+    const u = usuario as any;
+    const userId = u.userId || u.sub || u.id;
     if (!userId) {
       setLoading(false);
       setError("No se pudo obtener tu usuario. Intenta recargar la página.");
@@ -136,7 +137,16 @@ export default function MisDenunciasPage() {
         {misDenuncias.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {misDenuncias.map((denuncia) => (
-              <DenunciaCard key={denuncia.id} denuncia={denuncia} />
+              <DenunciaCard
+                key={denuncia.id}
+                denuncia={denuncia}
+                showDelete={true}
+                onDelete={() => {
+                  setMisDenuncias((prev) =>
+                    prev.filter((d: any) => d.id !== denuncia.id)
+                  );
+                }}
+              />
             ))}
           </div>
         ) : (

@@ -7,6 +7,7 @@ export async function crearDenuncia({
   image,
   lat,
   lng,
+  address,
 }: {
   title: string;
   description: string;
@@ -14,6 +15,7 @@ export async function crearDenuncia({
   image: File;
   lat?: number;
   lng?: number;
+  address?: string;
 }) {
   const formData = new FormData();
   formData.append("title", title);
@@ -22,6 +24,7 @@ export async function crearDenuncia({
   formData.append("image", image);
   if (lat) formData.append("lat", lat.toString());
   if (lng) formData.append("lng", lng.toString());
+  if (address) formData.append("address", address);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
@@ -33,6 +36,20 @@ export async function crearDenuncia({
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.error || "Error al crear denuncia");
+  }
+  return res.json();
+}
+
+export async function eliminarDenuncia(id: string | number) {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  const res = await fetch(`${API_URL}/denuncias/${id}`, {
+    method: "DELETE",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al eliminar la denuncia");
   }
   return res.json();
 }
