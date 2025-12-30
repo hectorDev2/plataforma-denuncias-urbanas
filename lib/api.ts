@@ -15,7 +15,8 @@ export async function getDenunciaPorId(id: string | number) {
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
       .replace("rejected", "rechazada")
-      .replace("in_review", "en-revision"),
+      .replace("in_review", "en-revision")
+      .replace("in progress", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
       lat: d.lat,
@@ -46,7 +47,8 @@ export async function getDenunciasPorUsuario(userId: string | number) {
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
       .replace("rejected", "rechazada")
-      .replace("in_review", "en-revision"),
+      .replace("in_review", "en-revision")
+      .replace("in progress", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
       lat: d.lat,
@@ -95,7 +97,8 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
       .replace("rejected", "rechazada")
-      .replace("in_review", "en-revision"),
+      .replace("in_review", "en-revision")
+      .replace("in progress", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
       lat: d.lat,

@@ -53,3 +53,34 @@ export async function eliminarDenuncia(id: string | number) {
   }
   return res.json();
 }
+
+export async function actualizarEstadoDenuncia(id: string | number, estado: string) {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+
+  // Map frontend status to backend status
+  const statusMap: Record<string, string> = {
+    "pendiente": "Pending",
+    "en-revision": "In Progress",
+    "resuelta": "Resolved",
+    "rechazada": "Rejected"
+  };
+
+  const backendStatus = statusMap[estado];
+  if (!backendStatus) throw new Error("Estado no válido");
+
+  const res = await fetch(`${API_URL}/denuncias/${id}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ status: backendStatus }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al actualizar estado");
+  }
+  return res.json();
+}
