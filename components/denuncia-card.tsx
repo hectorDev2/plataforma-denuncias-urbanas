@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, User, Trash2, MoreVertical, CheckCircle, XCircle, AlertCircle, Clock } from "lucide-react";
+import { MapPin, Calendar, User, Trash2, MoreVertical, Clock, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import type { Denuncia } from "@/lib/types";
 import { categoriasConfig, estadosConfig } from "@/data/mock-data";
 import { formatDistanceToNow } from "date-fns";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { eliminarDenuncia, actualizarEstadoDenuncia } from "@/lib/denuncias-api";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,21 +34,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface DenunciaCardProps {
   denuncia: Denuncia;
-  showDelete?: boolean; // Deprecated but kept for compatibility
+  showDelete?: boolean;
   onDelete?: () => void;
+  showAdminControls?: boolean;
+  onAction?: () => void;
 }
 
-export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardProps) {
+export function DenunciaCard({ denuncia, showDelete = false, onDelete, showAdminControls = false, onAction }: DenunciaCardProps) {
   const { usuario } = useAuth();
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(denuncia.estado);
-
-  const isAuthority = usuario?.rol === "autoridad";
 
   const confirmDelete = async () => {
     setIsDeleting(true);
@@ -55,6 +54,7 @@ export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardPro
       await eliminarDenuncia(denuncia.id);
       toast.success("Denuncia eliminada");
       if (onDelete) onDelete();
+      if (onAction) onAction();
       router.refresh();
     } catch (error) {
       toast.error("Error al eliminar la denuncia");
@@ -68,10 +68,10 @@ export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardPro
     try {
       toast.loading("Actualizando estado...");
       await actualizarEstadoDenuncia(denuncia.id, newStatus);
-      setCurrentStatus(newStatus as any);
       toast.dismiss();
-      toast.success(`Estado actualizado a ${estadosConfig[newStatus as any].label}`);
-      router.refresh(); // Refresh data to reflect changes in lists
+      toast.success(`Estado actualizado a ${estadosConfig[newStatus as keyof typeof estadosConfig]?.label || newStatus}`);
+      if (onAction) onAction();
+      router.refresh();
     } catch (error) {
       toast.dismiss();
       toast.error("Error al actualizar el estado");
@@ -82,25 +82,18 @@ export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardPro
     label: denuncia.categoria || "Sin categoría",
     color: "bg-gray-400",
   };
-
-  // Use currentStatus state for rendering
-  const estadoInfo = estadosConfig[currentStatus] || {
-    label: currentStatus || "Sin estado",
+  const estadoInfo = estadosConfig[denuncia.estado] || {
+    label: denuncia.estado || "Sin estado",
     color: "bg-gray-400",
   };
+
+  const isAuthority = usuario?.rol === "autoridad";
 
   // Si la imagen es relativa (empieza con /uploads), prepende el dominio del backend
   let imageUrl = denuncia.imagen;
   if (imageUrl && imageUrl.startsWith("/uploads")) {
     imageUrl = `http://localhost:3000${imageUrl}`;
   }
-
-  // Prevent click propagation for interactive elements
-  const stopProp = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   return (
     <div className="relative group h-full">
       <Link href={`/denuncias/${denuncia.id}`} className="block h-full">
@@ -120,8 +113,8 @@ export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardPro
             </div>
 
             {/* Admin Controls Overlay */}
-            {isAuthority && (
-              <div className="absolute top-5 left-5 z-20" onClick={stopProp}>
+            {isAuthority && showAdminControls && (
+              <div className="absolute top-5 left-5 z-20" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full shadow-md bg-white/90 backdrop-blur hover:bg-white">
@@ -144,14 +137,37 @@ export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardPro
                       Marcar Resuelta
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleStatusChange("rechazada")} className="text-red-600 focus:text-red-600">
-                      <XCircle className="mr-2 h-4 w-4" />
-                      Rechazar
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDeleting(true);
+                      }}
+                      className="text-red-600 focus:text-red-600"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Eliminar Definitivamente
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             )}
+            {/* Hidden Alert Dialog Trigger managed by state */}
+            <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
+              <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Acción Irreversible?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción eliminará la denuncia de la base de datos permanentemente. ¿Estás seguro?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={(e) => { e.stopPropagation(); setIsDeleting(false); }}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={(e) => { e.stopPropagation(); confirmDelete(); }} className="bg-red-600 hover:bg-red-700">
+                    Eliminar Definitivamente
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
 
           <CardContent className="pt-4 space-y-3 flex-1">
@@ -195,37 +211,39 @@ export function DenunciaCard({ denuncia, showDelete, onDelete }: DenunciaCardPro
                 <span>{denuncia.ciudadanoNombre ?? "Anónimo"}</span>
               </div>
             </div>
-
-            {/* Delete button only if REJECTED and AUTHORITY */}
-            {isAuthority && currentStatus === "rechazada" && (
-              <div className="w-full mt-3 pt-2 border-t flex justify-end" onClick={stopProp}>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm" className="w-full">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Eliminar Definitivamente
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>¿Eliminar definitivamente?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta acción borrará la denuncia de la base de datos y no se podrá recuperar.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-                        {isDeleting ? "Eliminando..." : "Sí, Eliminar"}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            )}
           </CardFooter>
         </Card>
       </Link>
+      {showDelete && !showAdminControls && (
+        <div className="absolute top-3 left-3 z-10 transition-opacity opacity-0 group-hover:opacity-100">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-8 w-8 rounded-full shadow-md"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción no se puede deshacer. La denuncia será eliminada permanentemente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={(e) => { e.stopPropagation(); confirmDelete(); }} className="bg-red-600 hover:bg-red-700">
+                  {isDeleting ? "Eliminando..." : "Eliminar"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
     </div>
   );
 }

@@ -20,7 +20,6 @@ export default function DashboardPage() {
     pendientes: 0,
     enRevision: 0,
     resueltas: 0,
-    rechazadas: 0,
     porCategoria: {
       bache: 0,
       basura: 0,
@@ -33,7 +32,6 @@ export default function DashboardPage() {
   });
   const [denunciasPendientes, setDenunciasPendientes] = useState<Denuncia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     async function cargarDatos() {
@@ -99,7 +97,6 @@ export default function DashboardPage() {
     { name: "Pendientes", value: stats.pendientes, color: "#eab308" },
     { name: "En Revisión", value: stats.enRevision, color: "#3b82f6" },
     { name: "Resueltas", value: stats.resueltas, color: "#22c55e" },
-    { name: "Rechazadas", value: stats.rechazadas, color: "#ef4444" },
   ]
 
   return (
@@ -126,8 +123,8 @@ export default function DashboardPage() {
           colorClass="text-yellow-600"
         />
         <StatCard
-          title="En Revisión"
-          value={stats.enRevision}
+          title="Casos Activos"
+          value={stats.enRevision + stats.pendientes}
           icon={AlertCircle}
           description="Siendo evaluadas"
           colorClass="text-blue-600"
@@ -204,7 +201,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Performance Metrics */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
         <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
@@ -232,20 +229,6 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-lg bg-red-100 flex items-center justify-center">
-                <XCircle className="h-6 w-6 text-red-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.rechazadas}</p>
-                <p className="text-sm text-muted-foreground">Rechazadas</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Pending Reports Section */}
@@ -256,28 +239,17 @@ export default function DashboardPage() {
               <CardTitle>Denuncias Pendientes</CardTitle>
               <CardDescription>Requieren atención inmediata</CardDescription>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowAll(!showAll)}
-              >
-                {showAll ? "Ver Menos" : "Ver Todas"}
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/denuncias">Ir al listado completo</Link>
-              </Button>
-            </div>
+            <Button variant="outline" asChild>
+              <Link href="/denuncias">Ver Todas</Link>
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
           {denunciasPendientes.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {denunciasPendientes
-                .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-                .slice(0, showAll ? undefined : 6)
-                .map((denuncia) => (
-                  <DenunciaCard key={denuncia.id} denuncia={denuncia} />
-                ))}
+              {denunciasPendientes.map((denuncia) => (
+                <DenunciaCard key={denuncia.id} denuncia={denuncia} />
+              ))}
             </div>
           ) : (
             <div className="text-center py-8">

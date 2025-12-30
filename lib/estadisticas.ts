@@ -6,7 +6,7 @@ export function calcularEstadisticas(): Estadisticas {
   const pendientes = mockDenuncias.filter((d) => d.estado === "pendiente").length
   const enRevision = mockDenuncias.filter((d) => d.estado === "en-revision").length
   const resueltas = mockDenuncias.filter((d) => d.estado === "resuelta").length
-  const rechazadas = mockDenuncias.filter((d) => d.estado === "rechazada").length
+
 
   const porCategoria: Record<CategoriaDenuncia, number> = {
     bache: mockDenuncias.filter((d) => d.categoria === "bache").length,
@@ -23,7 +23,7 @@ export function calcularEstadisticas(): Estadisticas {
     pendientes,
     enRevision,
     resueltas,
-    rechazadas,
+
     porCategoria,
   }
 }

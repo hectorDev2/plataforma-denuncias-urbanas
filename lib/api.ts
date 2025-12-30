@@ -14,8 +14,7 @@ export async function getDenunciaPorId(id: string | number) {
       .toLowerCase()
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
-      .replace("rejected", "rechazada")
-      .replace("in_review", "en-revision")
+
       .replace("in progress", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
@@ -46,8 +45,7 @@ export async function getDenunciasPorUsuario(userId: string | number) {
       .toLowerCase()
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
-      .replace("rejected", "rechazada")
-      .replace("in_review", "en-revision")
+
       .replace("in progress", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
@@ -69,8 +67,7 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
     const statusMap: Record<string, string> = {
       "pendiente": "Pending",
       "en-revision": "In Progress",
-      "resuelta": "Resolved",
-      "rechazada": "Rejected"
+      "resuelta": "Resolved"
     };
     if (statusMap[filters.estado]) {
       params.append("status", statusMap[filters.estado]);
@@ -96,8 +93,7 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
       .toLowerCase()
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
-      .replace("rejected", "rechazada")
-      .replace("in_review", "en-revision")
+
       .replace("in progress", "en-revision"),
     fecha: d.createdAt,
     ubicacion: {
@@ -173,15 +169,15 @@ export async function getDashboardStats() {
     pendientes: d.byStatus["Pending"] || 0,
     enRevision: d.byStatus["In Progress"] || 0,
     resueltas: d.byStatus["Resolved"] || 0,
-    rechazadas: d.byStatus["Rejected"] || 0,
+
     porCategoria: {
-      bache: (d.byCategory["bache"] || 0),
-      basura: (d.byCategory["basura"] || 0),
-      alumbrado: (d.byCategory["alumbrado"] || 0),
-      semaforo: (d.byCategory["semaforo"] || 0),
-      alcantarilla: (d.byCategory["alcantarilla"] || 0),
-      grafiti: (d.byCategory["grafiti"] || 0) + (d.byCategory["graffiti"] || 0),
-      otro: (d.byCategory["otro"] || 0),
+      bache: d.byCategory["bache"] || 0,
+      basura: d.byCategory["basura"] || 0,
+      alumbrado: d.byCategory["alumbrado"] || 0,
+      semaforo: d.byCategory["semaforo"] || 0,
+      alcantarilla: d.byCategory["alcantarilla"] || 0,
+      grafiti: d.byCategory["grafiti"] || 0,
+      otro: d.byCategory["otro"] || 0,
     },
   };
   return stats;

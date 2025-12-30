@@ -1,0 +1,125 @@
+"use client";
+
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { MoreVertical, Clock, AlertCircle, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { actualizarEstadoDenuncia, eliminarDenuncia } from "@/lib/denuncias-api";
+import { estadosConfig } from "@/data/mock-data";
+
+interface DenunciaControlsProps {
+    denunciaId: string | number;
+    currentStatus: string;
+}
+
+export function DenunciaControls({ denunciaId, currentStatus }: DenunciaControlsProps) {
+    const { usuario } = useAuth();
+    const router = useRouter();
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [status, setStatus] = useState(currentStatus);
+
+    const isAuthority = usuario?.rol === "autoridad";
+
+    if (!isAuthority) return null;
+
+    const handleStatusChange = async (newStatus: string) => {
+        try {
+            toast.loading("Actualizando estado...");
+            await actualizarEstadoDenuncia(denunciaId, newStatus);
+            setStatus(newStatus);
+            toast.dismiss();
+            toast.success(`Estado actualizado.`);
+            router.refresh();
+        } catch (error) {
+            toast.dismiss();
+            toast.error("Error al actualizar el estado");
+        }
+    };
+
+    const confirmDelete = async () => {
+        setIsDeleting(true);
+        try {
+            await eliminarDenuncia(denunciaId);
+            toast.success("Denuncia eliminada permanentemente");
+            router.push("/admin");
+            router.refresh();
+        } catch (error) {
+            toast.error("Error al eliminar la denuncia");
+            setIsDeleting(false);
+        }
+    };
+
+    return (
+        <div className="flex gap-2">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline">
+                        <MoreVertical className="h-4 w-4 mr-2" />
+                        Gestionar Estado
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Cambiar Estado</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => handleStatusChange("pendiente")}>
+                        <Clock className="mr-2 h-4 w-4 text-yellow-600" />
+                        Pendiente
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleStatusChange("en-revision")}>
+                        <AlertCircle className="mr-2 h-4 w-4 text-blue-600" />
+                        En Revisión
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleStatusChange("resuelta")}>
+                        <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
+                        Resuelta
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Eliminar
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>¿Eliminar definitivamente?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Esta acción borrará la denuncia de la base de datos y no se podrá recuperar.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+                            {isDeleting ? "Eliminando..." : "Sí, Eliminar"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </div>
+    );
+}

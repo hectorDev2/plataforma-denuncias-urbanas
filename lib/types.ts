@@ -1,4 +1,4 @@
-export type EstadoDenuncia = "pendiente" | "en-revision" | "resuelta" | "rechazada"
+export type EstadoDenuncia = "pendiente" | "en-revision" | "resuelta"
 
 export type CategoriaDenuncia = "bache" | "basura" | "alumbrado" | "semaforo" | "alcantarilla" | "grafiti" | "otro"
 
@@ -34,6 +34,5 @@ export interface Estadisticas {
   pendientes: number
   enRevision: number
   resueltas: number
-  rechazadas: number
   porCategoria: Record<CategoriaDenuncia, number>
 }

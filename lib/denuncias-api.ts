@@ -63,7 +63,7 @@ export async function actualizarEstadoDenuncia(id: string | number, estado: stri
     "pendiente": "Pending",
     "en-revision": "In Progress",
     "resuelta": "Resolved",
-    "rechazada": "Rejected"
+
   };
 
   const backendStatus = statusMap[estado];

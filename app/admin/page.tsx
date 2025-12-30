@@ -39,6 +39,7 @@ import {
     PieChart,
     Cell,
 } from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AdminDashboardPage() {
     const { usuario, isAuthenticated } = useAuth();
@@ -47,7 +48,7 @@ export default function AdminDashboardPage() {
         pendientes: 0,
         enRevision: 0,
         resueltas: 0,
-        rechazadas: 0,
+
         porCategoria: {
             bache: 0,
             basura: 0,
@@ -60,23 +61,26 @@ export default function AdminDashboardPage() {
     });
     const [denunciasPendientes, setDenunciasPendientes] = useState<Denuncia[]>([]);
     const [denunciasEnRevision, setDenunciasEnRevision] = useState<Denuncia[]>([]);
+    const [denunciasResueltas, setDenunciasResueltas] = useState<Denuncia[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [showAll, setShowAll] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
         async function cargarDatos() {
             if (!isAuthenticated || usuario?.rol !== "autoridad") return;
 
             try {
-                const [statsData, pendientesData, revisionData] = await Promise.all([
+                const [statsData, pendientesData, revisionData, resueltasData] = await Promise.all([
                     getDashboardStats(),
                     getDenuncias({ estado: "pendiente" }),
-                    getDenuncias({ estado: "en-revision" })
+                    getDenuncias({ estado: "en-revision" }),
+                    getDenuncias({ estado: "resuelta" })
                 ]);
 
                 setStats(statsData);
                 setDenunciasPendientes(pendientesData);
                 setDenunciasEnRevision(revisionData);
+                setDenunciasResueltas(resueltasData);
             } catch (error) {
                 console.error("Error cargando dashboard:", error);
             } finally {
@@ -85,7 +89,11 @@ export default function AdminDashboardPage() {
         }
 
         cargarDatos();
-    }, [isAuthenticated, usuario]);
+    }, [isAuthenticated, usuario, refreshTrigger]);
+
+    const handleRefresh = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
 
     if (!isAuthenticated || usuario?.rol !== "autoridad") {
         return (
@@ -134,7 +142,6 @@ export default function AdminDashboardPage() {
         { name: "Pendientes", value: stats.pendientes, color: "#eab308" },
         { name: "En Revisión", value: stats.enRevision, color: "#3b82f6" },
         { name: "Resueltas", value: stats.resueltas, color: "#22c55e" },
-        { name: "Rechazadas", value: stats.rechazadas, color: "#ef4444" },
     ];
 
     return (
@@ -201,9 +208,6 @@ export default function AdminDashboardPage() {
                     <CardContent>
                         <div className="text-3xl font-bold mb-2">{stats.pendientes}</div>
                         <p className="text-muted-foreground text-sm mb-4">Caso(s) esperando triaje</p>
-                        <Button variant="outline" className="w-full" asChild>
-                            <Link href="/denuncias?estado=pendiente">Gestionar Pendientes</Link>
-                        </Button>
                     </CardContent>
                 </Card>
 
@@ -218,9 +222,6 @@ export default function AdminDashboardPage() {
                     <CardContent>
                         <div className="text-3xl font-bold mb-2">{stats.enRevision}</div>
                         <p className="text-muted-foreground text-sm mb-4">Caso(s) asignados a cuadrillas</p>
-                        <Button variant="outline" className="w-full" asChild>
-                            <Link href="/denuncias?estado=en-revision">Ver casos en proceso</Link>
-                        </Button>
                     </CardContent>
                 </Card>
             </div>
@@ -298,47 +299,68 @@ export default function AdminDashboardPage() {
                 </Card>
             </div>
 
-            {/* Recent List */}
+            {/* Tabbed List */}
             <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle>Últimas Denuncias Ingresadas</CardTitle>
+                            <CardTitle>Gestión de Denuncias</CardTitle>
                             <CardDescription>
-                                Monitoreo en tiempo real de reportes ciudadanos
+                                Administra las denuncias por estado
                             </CardDescription>
-                        </div>
-                        <div className="flex gap-2">
-                            <Button
-                                variant="outline"
-                                onClick={() => setShowAll(!showAll)}
-                            >
-                                {showAll ? "Ver Menos" : "Ver Todas"}
-                            </Button>
-                            <Button variant="outline" asChild>
-                                <Link href="/denuncias">Ir al listado completo</Link>
-                            </Button>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {denunciasPendientes.length > 0 || denunciasEnRevision.length > 0 ? (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {[...denunciasPendientes, ...denunciasEnRevision]
-                                .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-                                .slice(0, showAll ? undefined : 6)
-                                .map((denuncia) => (
-                                    <DenunciaCard key={denuncia.id} denuncia={denuncia} />
-                                ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-8">
-                            <CheckCircle2 className="h-12 w-12 mx-auto text-green-600 mb-3" />
-                            <p className="text-muted-foreground">
-                                No hay denuncias recientes activas
-                            </p>
-                        </div>
-                    )}
+                    <Tabs defaultValue="pendientes" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3 mb-4">
+                            <TabsTrigger value="pendientes">Pendientes ({stats.pendientes})</TabsTrigger>
+                            <TabsTrigger value="revision">En Revisión ({stats.enRevision})</TabsTrigger>
+                            <TabsTrigger value="resueltas">Resueltas ({stats.resueltas})</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="pendientes">
+                            {denunciasPendientes.length > 0 ? (
+                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {denunciasPendientes.map((denuncia) => (
+                                        <DenunciaCard key={denuncia.id} denuncia={denuncia} showAdminControls={true} onAction={handleRefresh} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12 text-muted-foreground">
+                                    No hay denuncias pendientes.
+                                </div>
+                            )}
+                        </TabsContent>
+
+                        <TabsContent value="revision">
+                            {denunciasEnRevision.length > 0 ? (
+                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {denunciasEnRevision.map((denuncia) => (
+                                        <DenunciaCard key={denuncia.id} denuncia={denuncia} showAdminControls={true} onAction={handleRefresh} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12 text-muted-foreground">
+                                    No hay denuncias en revisión.
+                                </div>
+                            )}
+                        </TabsContent>
+
+                        <TabsContent value="resueltas">
+                            {denunciasResueltas.length > 0 ? (
+                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {denunciasResueltas.map((denuncia) => (
+                                        <DenunciaCard key={denuncia.id} denuncia={denuncia} showAdminControls={true} onAction={handleRefresh} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12 text-muted-foreground">
+                                    No hay denuncias resueltas.
+                                </div>
+                            )}
+                        </TabsContent>
+                    </Tabs>
                 </CardContent>
             </Card>
         </div>
