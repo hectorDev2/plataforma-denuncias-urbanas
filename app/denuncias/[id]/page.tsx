@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { categoriasConfig, estadosConfig } from "@/data/mock-data";
 import { getDenunciaPorId } from "@/lib/api";
 import type { Denuncia } from "@/lib/types";
@@ -14,20 +12,12 @@ import type { Denuncia } from "@/lib/types";
 import { MapPin, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import dynamic from "next/dynamic";
-
-const LocationMap = dynamic(() => import("@/components/LocationMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[300px] w-full bg-muted animate-pulse rounded-md flex items-center justify-center">
-      <p className="text-muted-foreground">Cargando mapa...</p>
-    </div>
-  ),
-});
+import DenunciaMapWrapper from "@/components/DenunciaMapWrapper";
 
 interface DenunciaDetallePageProps {
   params: { id: string };
 }
+
 
 export default async function DenunciaDetallePage({
   params,
@@ -254,7 +244,7 @@ export default async function DenunciaDetallePage({
             {denuncia.ubicacion &&
               typeof denuncia.ubicacion.lat === 'number' &&
               typeof denuncia.ubicacion.lng === 'number' ? (
-              <LocationMap
+              <DenunciaMapWrapper
                 lat={denuncia.ubicacion.lat}
                 lng={denuncia.ubicacion.lng}
                 readonly={true}
