@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import {
     Card,
@@ -11,11 +12,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/stat-card";
 import { DenunciaCard } from "@/components/denuncia-card";
-import {
-    calcularEstadisticas,
-    obtenerDenunciasPorEstado,
-} from "@/lib/estadisticas";
+import { getDashboardStats, getDenuncias } from "@/lib/api";
 import { categoriasConfig } from "@/data/mock-data";
+import type { Estadisticas, Denuncia } from "@/lib/types";
 import {
     FileText,
     Clock,
@@ -26,6 +25,7 @@ import {
     BarChart3,
     Shield,
     MapPin,
+    Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -42,6 +42,49 @@ import {
 
 export default function AdminDashboardPage() {
     const { usuario, isAuthenticated } = useAuth();
+    const [stats, setStats] = useState<Estadisticas>({
+        total: 0,
+        pendientes: 0,
+        enRevision: 0,
+        resueltas: 0,
+        rechazadas: 0,
+        porCategoria: {
+            bache: 0,
+            basura: 0,
+            alumbrado: 0,
+            semaforo: 0,
+            alcantarilla: 0,
+            grafiti: 0,
+            otro: 0,
+        },
+    });
+    const [denunciasPendientes, setDenunciasPendientes] = useState<Denuncia[]>([]);
+    const [denunciasEnRevision, setDenunciasEnRevision] = useState<Denuncia[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function cargarDatos() {
+            if (!isAuthenticated || usuario?.rol !== "autoridad") return;
+
+            try {
+                const [statsData, pendientesData, revisionData] = await Promise.all([
+                    getDashboardStats(),
+                    getDenuncias({ estado: "pendiente" }),
+                    getDenuncias({ estado: "en-revision" })
+                ]);
+
+                setStats(statsData);
+                setDenunciasPendientes(pendientesData);
+                setDenunciasEnRevision(revisionData);
+            } catch (error) {
+                console.error("Error cargando dashboard:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        cargarDatos();
+    }, [isAuthenticated, usuario]);
 
     if (!isAuthenticated || usuario?.rol !== "autoridad") {
         return (
@@ -64,9 +107,15 @@ export default function AdminDashboardPage() {
         );
     }
 
-    const stats = calcularEstadisticas();
-    const denunciasPendientes = obtenerDenunciasPorEstado("pendiente");
-    const denunciasEnRevision = obtenerDenunciasPorEstado("en-revision");
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-2 text-muted-foreground">Cargando panel...</span>
+            </div>
+        );
+    }
+
     const tasaResolucion =
         stats.total > 0
             ? Math.round((stats.resueltas / stats.total) * 100)
@@ -75,7 +124,7 @@ export default function AdminDashboardPage() {
     // Datos para gráficos
     const dataCategoria = Object.entries(stats.porCategoria).map(
         ([key, value]) => ({
-            name: categoriasConfig[key as keyof typeof categoriasConfig].label,
+            name: categoriasConfig[key as keyof typeof categoriasConfig]?.label || key, // Fallback safe
             cantidad: value,
         })
     );
@@ -94,7 +143,7 @@ export default function AdminDashboardPage() {
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <Shield className="h-8 w-8 text-primary" />
-                        <h1 className="text-3xl md:text-4xl font-bold">Panel de Administración</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold">Panel de Administración (En Vivo)</h1>
                     </div>
                     <p className="text-muted-foreground text-lg">
                         Bienvenido, Autoridad {usuario.nombre}

@@ -60,8 +60,26 @@ export async function getDenunciasPorUsuario(userId: string | number) {
 }
 
 // Obtener denuncias desde el backend
-export async function getDenuncias() {
-  const res = await fetch(`${API_URL}/denuncias`, {
+export async function getDenuncias(filters?: { estado?: string; categoria?: string }) {
+  const params = new URLSearchParams();
+
+  if (filters?.estado) {
+    const statusMap: Record<string, string> = {
+      "pendiente": "Pending",
+      "en-revision": "In Progress",
+      "resuelta": "Resolved",
+      "rechazada": "Rejected"
+    };
+    if (statusMap[filters.estado]) {
+      params.append("status", statusMap[filters.estado]);
+    }
+  }
+
+  if (filters?.categoria) {
+    params.append("category", filters.categoria);
+  }
+
+  const res = await fetch(`${API_URL}/denuncias?${params.toString()}`, {
     method: "GET",
   });
   if (!res.ok) throw new Error("Error al obtener denuncias");
@@ -136,4 +154,32 @@ export async function getMe(token: string) {
     ...data,
     rol: data.role === "authority" ? "autoridad" : "ciudadano",
   };
+}
+
+// Obtener estadísticas del dashboard
+export async function getDashboardStats() {
+  const res = await fetch(`${API_URL}/denuncias/stats/dashboard`, {
+    method: "GET",
+  });
+  if (!res.ok) throw new Error("Error al obtener estadísticas");
+  const d = await res.json();
+
+  // Mapear respuesta del backend al formato del frontend
+  const stats = {
+    total: d.total,
+    pendientes: d.byStatus["Pending"] || 0,
+    enRevision: d.byStatus["In Progress"] || 0,
+    resueltas: d.byStatus["Resolved"] || 0,
+    rechazadas: d.byStatus["Rejected"] || 0,
+    porCategoria: {
+      bache: d.byCategory["bache"] || 0,
+      basura: d.byCategory["basura"] || 0,
+      alumbrado: d.byCategory["alumbrado"] || 0,
+      semaforo: d.byCategory["semaforo"] || 0,
+      alcantarilla: d.byCategory["alcantarilla"] || 0,
+      grafiti: d.byCategory["grafiti"] || 0,
+      otro: d.byCategory["otro"] || 0,
+    },
+  };
+  return stats;
 }
