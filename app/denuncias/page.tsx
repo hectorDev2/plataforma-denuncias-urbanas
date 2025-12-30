@@ -91,12 +91,12 @@ export default function DenunciasPage() {
               placeholder="Buscar por título, descripción o ubicación..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/50 border-white/40 focus:bg-white/80 transition-colors shadow-sm"
+              className="pl-10 !bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all"
             />
           </div>
 
           <Select value={categoriaFilter} onValueChange={setCategoriaFilter}>
-            <SelectTrigger className="w-full md:w-[200px] bg-white/50 border-white/40 focus:bg-white/80 transition-colors shadow-sm">
+            <SelectTrigger className="w-full md:w-[200px] !bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
@@ -111,7 +111,7 @@ export default function DenunciasPage() {
           </Select>
 
           <Select value={estadoFilter} onValueChange={setEstadoFilter}>
-            <SelectTrigger className="w-full md:w-[200px] bg-white/50 border-white/40 focus:bg-white/80 transition-colors shadow-sm">
+            <SelectTrigger className="w-full md:w-[200px] !bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Estado" />
             </SelectTrigger>

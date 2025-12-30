@@ -244,6 +244,7 @@ export default function NuevaDenunciaPage() {
                   onChange={(e) => handleChange("titulo", e.target.value)}
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 
@@ -254,7 +255,7 @@ export default function NuevaDenunciaPage() {
                   onValueChange={(value) => handleChange("categoria", value)}
                   disabled={isLoading}
                 >
-                  <SelectTrigger id="categoria">
+                  <SelectTrigger id="categoria" className="!bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0">
                     <SelectValue placeholder="Selecciona una categoría" />
                   </SelectTrigger>
                   <SelectContent>
@@ -277,7 +278,7 @@ export default function NuevaDenunciaPage() {
                   required
                   disabled={isLoading}
                   rows={5}
-                  className="resize-none"
+                  className="resize-none !bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md"
                 />
                 <p className="text-xs text-muted-foreground">
                   Incluye detalles como tamaño, tiempo que lleva el problema,
@@ -296,7 +297,7 @@ export default function NuevaDenunciaPage() {
                     onChange={(e) => handleChange("direccion", e.target.value)}
                     required
                     disabled={isLoading}
-                    className="pl-10"
+                    className="pl-10 !bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0"
                   />
                 </div>
                 <Button
@@ -305,7 +306,7 @@ export default function NuevaDenunciaPage() {
                   size="sm"
                   onClick={handleGetCurrentLocation}
                   disabled={isGettingLocation || isLoading}
-                  className="w-full bg-transparent"
+                  className="w-full bg-white border-white hover:bg-gray-50 transition-all shadow-md"
                 >
                   <Navigation className="h-4 w-4 mr-2" />
                   {isGettingLocation
@@ -335,7 +336,7 @@ export default function NuevaDenunciaPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="imagen">Fotografía *</Label>
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors">
+                <div className="border-2 border-dashed border-white/60 rounded-lg p-6 text-center hover:border-primary hover:bg-white/40 bg-white/20 backdrop-blur-sm transition-all shadow-sm">
                   <input
                     id="imagen"
                     type="file"

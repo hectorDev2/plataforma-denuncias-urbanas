@@ -12,6 +12,7 @@ import Link from "next/link";
 export default function MisDenunciasPage() {
   const { usuario, isAuthenticated } = useAuth();
   const [misDenuncias, setMisDenuncias] = useState<any[]>([]);
+  const [filter, setFilter] = useState("todos");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -80,6 +81,11 @@ export default function MisDenunciasPage() {
       </div>
     );
   } else {
+    const filteredDenuncias = misDenuncias.filter((d) => {
+      if (filter === "todos") return true;
+      return d.estado === filter;
+    });
+
     content = (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -99,56 +105,75 @@ export default function MisDenunciasPage() {
           </Button>
         </div>
 
-        {/* Stats */}
+        {/* Stats - Interactive Filters */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold">{misDenuncias.length}</div>
-              <p className="text-sm text-muted-foreground">Total</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-yellow-600">
-                {misDenuncias.filter((d) => d.estado === "pendiente").length}
-              </div>
-              <p className="text-sm text-muted-foreground">Pendientes</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-blue-600">
-                {misDenuncias.filter((d) => d.estado === "en-revision").length}
-              </div>
-              <p className="text-sm text-muted-foreground">En Revisión</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-green-600">
-                {misDenuncias.filter((d) => d.estado === "resuelta").length}
-              </div>
-              <p className="text-sm text-muted-foreground">Resueltas</p>
-            </CardContent>
-          </Card>
+          <div onClick={() => setFilter("todos")} className="cursor-pointer transition-transform hover:scale-105">
+            <Card className={`bg-white/60 backdrop-blur-md border-white/40 shadow-sm transition-all ${filter === 'todos' ? 'ring-2 ring-primary border-primary' : ''}`}>
+              <CardContent className="pt-6">
+                <div className="text-2xl font-bold">{misDenuncias.length}</div>
+                <p className="text-sm text-muted-foreground">Total</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div onClick={() => setFilter("pendiente")} className="cursor-pointer transition-transform hover:scale-105">
+            <Card className={`bg-white/60 backdrop-blur-md border-white/40 shadow-sm transition-all ${filter === 'pendiente' ? 'ring-2 ring-yellow-500 border-yellow-500' : ''}`}>
+              <CardContent className="pt-6">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {misDenuncias.filter((d) => d.estado === "pendiente").length}
+                </div>
+                <p className="text-sm text-muted-foreground">Pendientes</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div onClick={() => setFilter("en-revision")} className="cursor-pointer transition-transform hover:scale-105">
+            <Card className={`bg-white/60 backdrop-blur-md border-white/40 shadow-sm transition-all ${filter === 'en-revision' ? 'ring-2 ring-blue-500 border-blue-500' : ''}`}>
+              <CardContent className="pt-6">
+                <div className="text-2xl font-bold text-blue-600">
+                  {misDenuncias.filter((d) => d.estado === "en-revision").length}
+                </div>
+                <p className="text-sm text-muted-foreground">En Revisión</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div onClick={() => setFilter("resuelta")} className="cursor-pointer transition-transform hover:scale-105">
+            <Card className={`bg-white/60 backdrop-blur-md border-white/40 shadow-sm transition-all ${filter === 'resuelta' ? 'ring-2 ring-green-500 border-green-500' : ''}`}>
+              <CardContent className="pt-6">
+                <div className="text-2xl font-bold text-green-600">
+                  {misDenuncias.filter((d) => d.estado === "resuelta").length}
+                </div>
+                <p className="text-sm text-muted-foreground">Resueltas</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Denuncias Grid */}
         {misDenuncias.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {misDenuncias.map((denuncia) => (
-              <DenunciaCard
-                key={denuncia.id}
-                denuncia={denuncia}
-                showDelete={true}
-                onDelete={() => {
-                  setMisDenuncias((prev) =>
-                    prev.filter((d: any) => d.id !== denuncia.id)
-                  );
-                }}
-              />
-            ))}
-          </div>
+          <>
+            {filteredDenuncias.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredDenuncias.map((denuncia) => (
+                  <DenunciaCard
+                    key={denuncia.id}
+                    denuncia={denuncia}
+                    showDelete={true}
+                    onDelete={() => {
+                      setMisDenuncias((prev) =>
+                        prev.filter((d: any) => d.id !== denuncia.id)
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                No hay denuncias con el estado seleccionado.
+              </div>
+            )}
+          </>
         ) : (
           <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
             <CardContent className="pt-6 text-center py-12">
