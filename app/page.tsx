@@ -16,7 +16,7 @@ import { getDenuncias } from "@/lib/api";
 import { DenunciaCard } from "@/components/denuncia-card";
 
 export default function HomePage() {
-  const [denuncias, setDenuncias] = useState([]);
+  const [denuncias, setDenuncias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -38,10 +38,10 @@ export default function HomePage() {
     tasaResolucion:
       denuncias.length > 0
         ? Math.round(
-            (denuncias.filter((d) => d.estado === "resuelta").length /
-              denuncias.length) *
-              100
-          )
+          (denuncias.filter((d) => d.estado === "resuelta").length /
+            denuncias.length) *
+          100
+        )
         : 0,
   };
 
@@ -88,7 +88,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="border-2">
+            <Card className="border-white/40 bg-white/60 backdrop-blur-md shadow-sm">
               <CardContent className="pt-6 space-y-4">
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <MapPin className="h-6 w-6 text-primary" />
@@ -101,7 +101,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2">
+            <Card className="border-white/40 bg-white/60 backdrop-blur-md shadow-sm">
               <CardContent className="pt-6 space-y-4">
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <FileText className="h-6 w-6 text-primary" />
@@ -114,7 +114,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2">
+            <Card className="border-white/40 bg-white/60 backdrop-blur-md shadow-sm">
               <CardContent className="pt-6 space-y-4">
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <BarChart3 className="h-6 w-6 text-primary" />
@@ -198,7 +198,7 @@ export default function HomePage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <Card className="border-2">
+            <Card className="border-white/40 bg-white/60 backdrop-blur-md shadow-sm">
               <CardContent className="p-8 md:p-12">
                 <div className="flex items-start gap-6">
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">

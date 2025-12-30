@@ -82,7 +82,7 @@ export default function RegistroPage() {
   if (success) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 bg-muted/30">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6 text-center space-y-4">
             <div className="flex justify-center">
               <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
@@ -122,7 +122,7 @@ export default function RegistroPage() {
         </div>
 
         {/* Formulario */}
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardHeader>
             <CardTitle>Registro</CardTitle>
             <CardDescription>

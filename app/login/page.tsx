@@ -60,7 +60,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardHeader>
             <CardTitle>Bienvenido de nuevo</CardTitle>
             <CardDescription>

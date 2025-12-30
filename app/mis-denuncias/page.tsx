@@ -44,7 +44,7 @@ export default function MisDenunciasPage() {
   if (!isAuthenticated) {
     content = (
       <div className="container mx-auto px-4 py-12">
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6 text-center space-y-4">
             <FileText className="h-12 w-12 mx-auto text-muted-foreground" />
             <div className="space-y-2">
@@ -101,13 +101,13 @@ export default function MisDenunciasPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card>
+          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
             <CardContent className="pt-6">
               <div className="text-2xl font-bold">{misDenuncias.length}</div>
               <p className="text-sm text-muted-foreground">Total</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-yellow-600">
                 {misDenuncias.filter((d) => d.estado === "pendiente").length}
@@ -115,7 +115,7 @@ export default function MisDenunciasPage() {
               <p className="text-sm text-muted-foreground">Pendientes</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-blue-600">
                 {misDenuncias.filter((d) => d.estado === "en-revision").length}
@@ -123,7 +123,7 @@ export default function MisDenunciasPage() {
               <p className="text-sm text-muted-foreground">En Revisión</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-green-600">
                 {misDenuncias.filter((d) => d.estado === "resuelta").length}
@@ -150,7 +150,7 @@ export default function MisDenunciasPage() {
             ))}
           </div>
         ) : (
-          <Card>
+          <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
             <CardContent className="pt-6 text-center py-12">
               <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">

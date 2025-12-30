@@ -19,7 +19,7 @@ export default function DashboardPage() {
   if (!isAuthenticated || usuario?.rol !== "autoridad") {
     return (
       <div className="container mx-auto px-4 py-12">
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6 text-center space-y-4">
             <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground" />
             <div className="space-y-2">
@@ -96,7 +96,7 @@ export default function DashboardPage() {
       {/* Charts Section */}
       <div className="grid lg:grid-cols-2 gap-6 mb-8">
         {/* Bar Chart - Categorías */}
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardHeader>
             <CardTitle>Denuncias por Categoría</CardTitle>
             <CardDescription>Distribución de problemas reportados</CardDescription>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Pie Chart - Estados */}
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardHeader>
             <CardTitle>Estado de las Denuncias</CardTitle>
             <CardDescription>Distribución por estado actual</CardDescription>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -157,7 +157,7 @@ export default function DashboardPage() {
 
       {/* Performance Metrics */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-lg bg-green-100 flex items-center justify-center">
@@ -171,7 +171,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -185,7 +185,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-lg bg-red-100 flex items-center justify-center">
@@ -201,7 +201,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Pending Reports Section */}
-      <Card>
+      <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>

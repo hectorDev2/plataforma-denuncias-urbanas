@@ -157,7 +157,7 @@ export default function NuevaDenunciaPage() {
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6 text-center space-y-4">
             <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground" />
             <div className="space-y-2">
@@ -185,7 +185,7 @@ export default function NuevaDenunciaPage() {
   if (success) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardContent className="pt-6 text-center space-y-4">
             <div className="flex justify-center">
               <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function NuevaDenunciaPage() {
           </p>
         </div>
 
-        <Card>
+        <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardHeader>
             <CardTitle>Información del Problema</CardTitle>
             <CardDescription>
