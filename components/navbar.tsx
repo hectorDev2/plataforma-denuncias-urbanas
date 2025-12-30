@@ -15,44 +15,49 @@ export function Navbar() {
   const navLinks = isAuthenticated
     ? usuario?.rol === "autoridad"
       ? [
-          { href: "/", label: "Inicio" },
-          { href: "/denuncias", label: "Denuncias" },
-          { href: "/dashboard", label: "Dashboard" },
-        ]
-      : [
-          { href: "/", label: "Inicio" },
-          { href: "/denuncias", label: "Denuncias" },
-          { href: "/mis-denuncias", label: "Mis Denuncias" },
-          { href: "/nueva-denuncia", label: "Reportar" },
-        ]
-    : [
         { href: "/", label: "Inicio" },
         { href: "/denuncias", label: "Denuncias" },
+        { href: "/dashboard", label: "Dashboard" },
       ]
+      : [
+        { href: "/", label: "Inicio" },
+        { href: "/denuncias", label: "Denuncias" },
+        { href: "/mis-denuncias", label: "Mis Denuncias" },
+        { href: "/nueva-denuncia", label: "Reportar" },
+      ]
+    : [
+      { href: "/", label: "Inicio" },
+      { href: "/denuncias", label: "Denuncias" },
+    ]
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <MapPin className="h-6 w-6 text-primary" />
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-bold text-xl hover:scale-105 transition-transform duration-200"
+          >
+            <div className="bg-primary/10 p-2 rounded-full">
+              <MapPin className="h-6 w-6 text-primary" />
+            </div>
             <span className="hidden sm:inline">Denuncias Urbanas</span>
             <span className="sm:hidden">DU</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link
+              <Button
                 key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === link.href ? "text-primary" : "text-muted-foreground"
-                }`}
+                variant={pathname === link.href ? "secondary" : "ghost"}
+                asChild
+                className="text-sm font-medium"
               >
-                {link.label}
-              </Link>
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
             ))}
           </div>
 
@@ -94,9 +99,8 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`block py-2 text-sm font-medium transition-colors ${
-                  pathname === link.href ? "text-primary" : "text-muted-foreground"
-                }`}
+                className={`block py-2 text-sm font-medium transition-colors ${pathname === link.href ? "text-primary" : "text-muted-foreground"
+                  }`}
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
