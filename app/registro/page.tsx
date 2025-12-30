@@ -149,6 +149,7 @@ export default function RegistroPage() {
                   onChange={(e) => handleChange("name", e.target.value)}
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 
@@ -163,6 +164,7 @@ export default function RegistroPage() {
                   onChange={(e) => handleChange("email", e.target.value)}
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 
@@ -177,6 +179,7 @@ export default function RegistroPage() {
                   onChange={(e) => handleChange("password", e.target.value)}
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 
@@ -193,6 +196,7 @@ export default function RegistroPage() {
                   }
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 

@@ -86,6 +86,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 
@@ -99,6 +100,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="!bg-white !border-white shadow-md focus:!bg-white focus:!border-primary transition-all aria-invalid:!border-white aria-invalid:!ring-0"
                 />
               </div>
 
