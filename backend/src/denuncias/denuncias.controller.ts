@@ -103,7 +103,7 @@ export class DenunciasController {
       throw new ForbiddenException('Complaint not found');
     }
 
-    // Check if user is the owner or an authority (optional, but good practice)
+    // Verificar si el usuario es propietario o una autoridad (opcional, buena práctica)
     const usuarioId = solicitud.user.usuarioId ?? solicitud.user.userId;
     const rolUsuario = solicitud.user.rol ?? solicitud.user.role;
     if (denuncia.usuarioId !== usuarioId && rolUsuario !== 'authority') {
