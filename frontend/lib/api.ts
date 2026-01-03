@@ -83,7 +83,7 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
   });
   if (!res.ok) throw new Error("Error al obtener denuncias");
   const data = await res.json();
-  // Adaptar los campos del backend a los que espera el frontend
+  // Adaptar los campos del backend al formato esperado por el frontend
   return data.map((d: any) => ({
     id: String(d.id),
     titulo: d.titulo ?? d.title,
