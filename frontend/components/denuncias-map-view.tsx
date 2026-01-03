@@ -18,7 +18,7 @@ export function DenunciasMapView({ denuncias }: DenunciasMapViewProps) {
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
-      {/* Map Area */}
+      {/* Área del mapa */}
       <div className="lg:col-span-2">
         <Card>
           <CardHeader>
@@ -26,7 +26,7 @@ export function DenunciasMapView({ denuncias }: DenunciasMapViewProps) {
           </CardHeader>
           <CardContent>
             <div className="relative aspect-video w-full bg-muted rounded-lg overflow-hidden">
-              {/* Simulated map with markers */}
+              {/* Mapa simulado con marcadores */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center space-y-3 p-6">
                   <MapPin className="h-12 w-12 mx-auto text-primary" />
@@ -39,7 +39,7 @@ export function DenunciasMapView({ denuncias }: DenunciasMapViewProps) {
                 </div>
               </div>
 
-              {/* Grid pattern background */}
+              {/* Fondo con patrón de cuadrícula */}
               <svg className="w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -49,7 +49,7 @@ export function DenunciasMapView({ denuncias }: DenunciasMapViewProps) {
                 <rect width="100%" height="100%" fill="url(#map-grid)" />
               </svg>
 
-              {/* Simulated markers */}
+              {/* Marcadores simulados */}
               <div className="absolute inset-0 pointer-events-none">
                 {denuncias.slice(0, 8).map((denuncia, index) => {
                   const categoriaInfo = categoriasConfig[denuncia.categoria]
@@ -109,7 +109,7 @@ export function DenunciasMapView({ denuncias }: DenunciasMapViewProps) {
         </Card>
       </div>
 
-      {/* List Area */}
+      {/* Área de lista */}
       <div>
         <Card>
           <CardHeader>
