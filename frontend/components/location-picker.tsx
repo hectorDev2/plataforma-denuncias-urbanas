@@ -35,7 +35,7 @@ export function LocationPicker({ onLocationSelect, initialLocation }: LocationPi
           setIsGettingLocation(false)
         },
         (error) => {
-          console.error("[v0] Error getting location:", error)
+          console.error("[v0] Error al obtener la ubicación:", error)
           // Usar ubicación por defecto si falla
           const ubicacion: Ubicacion = {
             lat: 19.4326,
