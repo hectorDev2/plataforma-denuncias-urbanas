@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import React from "react";
 
+// Carga dinámica del mapa en el cliente (evita render en servidor)
 const LocationMap = dynamic(() => import("@/components/LocationMap"), {
     ssr: false,
     loading: () => (
