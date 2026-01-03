@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+
+  role      String   @default("citizen")
+  // citizen | authority | admin
+
+  status    String   @default("active")
+  // active | blocked
+
+  avatar    String?
+
+  complaints     Complaint[]
+  sentMessages   Message[]           @relation("SentMessages")
+  notifications  Notification[]
+  resetTokens    PasswordResetToken[]
+}
+
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+
+  status      String   @default("pending")
+  // pending | in_progress | resolved
+
+  lat         Float?
+  lng         Float?
+  address     String?
+  imageUrl    String?
+
+  createdAt   DateTime @default(now())
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  senderId  Int
+  sender    User     @relation("SentMessages", fields: [senderId], references: [id])
+
+  receiverId Int
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  type      String
+  // status_change | message
+
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}

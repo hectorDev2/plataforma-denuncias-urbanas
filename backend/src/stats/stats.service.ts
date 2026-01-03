@@ -1,0 +1,112 @@
+
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+
+@Injectable()
+export class StatsService {
+  constructor(private prisma: PrismaService) {}
+
+  async getDashboardStats() {
+    // 1️⃣ Total de denuncias
+    const totalComplaints = await this.prisma.complaint.count();
+
+    // 2️⃣ Denuncias por estado
+    const statusGroups = await this.prisma.complaint.groupBy({
+      by: ['status'],
+      _count: { status: true },
+    });
+    
+    // Normalize to ensure all statuses are present
+    const statusMap = {
+      pending: 0,
+      in_progress: 0,
+      resolved: 0,
+    };
+    statusGroups.forEach((g) => {
+      if (g.status in statusMap) {
+        statusMap[g.status] = g._count.status;
+      }
+    });
+
+    // 3️⃣ Denuncias por categoría
+    const categoryGroups = await this.prisma.complaint.groupBy({
+      by: ['category'],
+      _count: { category: true },
+    });
+
+    const categoryStats = categoryGroups.map((g) => ({
+      category: g.category,
+      count: g._count.category,
+    }));
+
+    // 4️⃣ Denuncias por fecha (JS processing for Chart data)
+    const complaints = await this.prisma.complaint.findMany({
+      select: { createdAt: true },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const dateStats = this.processDateStats(complaints);
+
+    // 5️⃣ Usuarios registrados
+    const totalUsers = await this.prisma.user.count();
+    const activeUsers = await this.prisma.user.count({
+      where: { status: 'active' },
+    });
+    const blockedUsers = await this.prisma.user.count({
+      where: { status: 'blocked' },
+    });
+
+    return {
+      complaints: {
+        total: totalComplaints,
+        byStatus: statusMap,
+        byCategory: categoryStats,
+        byDate: dateStats,
+      },
+      users: {
+        total: totalUsers,
+        active: activeUsers,
+        blocked: blockedUsers,
+      },
+    };
+  }
+
+  private processDateStats(complaints: { createdAt: Date }[]) {
+    // Helpers
+    const getWeekNumber = (d: Date) => {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+      return `${d.getUTCFullYear()}-W${weekNo}`;
+    };
+
+    const byDay: Record<string, number> = {};
+    const byWeek: Record<string, number> = {};
+    const byMonth: Record<string, number> = {};
+
+    complaints.forEach((c) => {
+      const date = new Date(c.createdAt);
+      const dayKey = date.toISOString().split('T')[0];
+      const monthKey = date.toISOString().slice(0, 7); // YYYY-MM
+      const weekKey = getWeekNumber(date);
+
+      byDay[dayKey] = (byDay[dayKey] || 0) + 1;
+      byWeek[weekKey] = (byWeek[weekKey] || 0) + 1;
+      byMonth[monthKey] = (byMonth[monthKey] || 0) + 1;
+    });
+
+    // Transform to array formats for charts if needed, or keep objects
+    // Let's return arrays sorted by key
+    const toArray = (obj: Record<string, number>) => 
+      Object.entries(obj)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([key, value]) => ({ date: key, count: value }));
+
+    return {
+      daily: toArray(byDay),
+      weekly: toArray(byWeek),
+      monthly: toArray(byMonth),
+    };
+  }
+}
