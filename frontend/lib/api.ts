@@ -148,7 +148,7 @@ export async function getMe(token: string) {
   });
   if (!res.ok) throw new Error("No autenticado");
   const data = await res.json();
-  // Map backend roles to frontend types
+  // Mapear roles del backend a tipos del frontend
   return {
     ...data,
     rol: (data.rol ?? data.role) === "authority" ? "autoridad" : "ciudadano",
