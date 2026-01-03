@@ -112,7 +112,7 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete, showAdmin
               </div>
             </div>
 
-            {/* Admin Controls Overlay */}
+            {/* Controles de administrador (superposición) */}
             {isAuthority && showAdminControls && (
               <div className="absolute top-5 left-5 z-20" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                 <DropdownMenu>
@@ -151,7 +151,7 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete, showAdmin
                 </DropdownMenu>
               </div>
             )}
-            {/* Hidden Alert Dialog Trigger managed by state */}
+            {/* Trigger de diálogo de alerta oculto controlado por estado */}
             <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
               <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                 <AlertDialogHeader>
