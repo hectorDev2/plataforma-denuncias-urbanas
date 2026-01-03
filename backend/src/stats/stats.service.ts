@@ -7,16 +7,16 @@ export class StatsService {
   constructor(private prisma: PrismaService) {}
 
   async getDashboardStats() {
-    // 1️⃣ Total de denuncias
+    // 1. Total de denuncias
     const totalComplaints = await this.prisma.complaint.count();
 
-    // 2️⃣ Denuncias por estado
+    // 2. Denuncias por estado
     const statusGroups = await this.prisma.complaint.groupBy({
       by: ['estado'],
       _count: { estado: true },
     });
     
-    // Normalize to ensure all statuses are present
+    // Normalizar para asegurar que todos los estados estén presentes
     const statusMap = {
       pending: 0,
       in_progress: 0,
@@ -28,7 +28,7 @@ export class StatsService {
       }
     });
 
-    // 3️⃣ Denuncias por categoría
+    // 3. Denuncias por categoría
     const categoryGroups = await this.prisma.complaint.groupBy({
       by: ['categoria'],
       _count: { categoria: true },
@@ -39,7 +39,7 @@ export class StatsService {
       count: g._count.categoria,
     }));
 
-    // 4️⃣ Denuncias por fecha (JS processing for Chart data)
+    // 4. Denuncias por fecha (procesamiento JS para datos de gráficas)
     const complaints = await this.prisma.complaint.findMany({
       select: { creadoEn: true },
       orderBy: { creadoEn: 'asc' },
@@ -47,7 +47,7 @@ export class StatsService {
 
     const dateStats = this.processDateStats(complaints);
 
-    // 5️⃣ Usuarios registrados
+    // 5. Usuarios registrados
     const totalUsers = await this.prisma.user.count();
     const activeUsers = await this.prisma.user.count({
       where: { estado: 'active' },
@@ -72,7 +72,7 @@ export class StatsService {
   }
 
   private processDateStats(complaints: { creadoEn: Date }[]) {
-    // Helpers
+    // Funciones auxiliares
     const getWeekNumber = (d: Date) => {
       d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
@@ -96,8 +96,8 @@ export class StatsService {
       byMonth[monthKey] = (byMonth[monthKey] || 0) + 1;
     });
 
-    // Transform to array formats for charts if needed, or keep objects
-    // Let's return arrays sorted by key
+    // Transformar a formatos de arrays para gráficas si es necesario, o mantener objetos
+    // Devolver arreglos ordenados por clave
     const toArray = (obj: Record<string, number>) => 
       Object.entries(obj)
         .sort((a, b) => a[0].localeCompare(b[0]))
