@@ -151,7 +151,7 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete, showAdmin
                 </DropdownMenu>
               </div>
             )}
-            {/* Trigger de diálogo de alerta oculto controlado por estado */}
+            {/* Trigger del diálogo de alerta (controlado por estado) */}
             <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
               <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                 <AlertDialogHeader>
