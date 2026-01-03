@@ -1,8 +1,8 @@
-# 📢 API - Sistema de Denuncias Ciudadanas
+# API - Sistema de Denuncias Ciudadanas
 
 Backend para la gestión y seguimiento de denuncias ciudadanas (baches, basura, alumbrado, etc.). Desarrollado con **NestJS** y **Prisma**.
 
-## 🚀 Características Principales
+## Características Principales
 
 - **Autenticación y Autorización**:
   - Registro e inicio de sesión seguro (JWT).
@@ -19,7 +19,7 @@ Backend para la gestión y seguimiento de denuncias ciudadanas (baches, basura, 
 - **Base de Datos**:
   - ORM Prisma con SQLite (configuración por defecto).
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 - **Framework**: [NestJS](https://nestjs.com/)
 - **Lenguaje**: TypeScript
@@ -27,7 +27,7 @@ Backend para la gestión y seguimiento de denuncias ciudadanas (baches, basura, 
 - **Base de Datos**: SQLite (Dev) / PostgreSQL (Prod compatible)
 - **Autenticación**: Passport + JWT
 
-## ⚙️ Instalación y Configuración
+## Instalación y Configuración
 
 ### 1. Requisitos previos
 - Node.js (v18 o superior)
@@ -75,7 +75,7 @@ npm run build
 npm run start:prod
 ```
 
-## 📚 Documentación de API (Endpoints Clave)
+## Documentación de API (Endpoints Clave)
 
 ### Autenticación
 - `POST /auth/login` - Iniciar sesión.
@@ -90,7 +90,7 @@ npm run start:prod
 ### Estadísticas (Admin)
 - `GET /stats/dashboard` - Métricas para gráficos y KPIs.
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Unit tests
