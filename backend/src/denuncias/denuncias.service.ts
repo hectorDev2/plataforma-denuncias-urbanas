@@ -11,7 +11,7 @@ export class DenunciasService {
     usuarioId: number,
     urlImagen?: string,
   ) {
-    // Map DTO fields to Prisma fields
+    // Mapear campos del DTO a los campos de Prisma
     const data: any = {
       titulo: (createDenunciaDto as any).titulo ?? (createDenunciaDto as any).title,
       descripcion: (createDenunciaDto as any).descripcion ?? (createDenunciaDto as any).description,
