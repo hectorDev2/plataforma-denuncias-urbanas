@@ -7,24 +7,24 @@ export async function getDenunciaPorId(id: string | number) {
   const d = await res.json();
   return {
     id: String(d.id),
-    titulo: d.title,
-    descripcion: d.description,
-    categoria: (d.category || "").toLowerCase(),
-    estado: (d.status || "")
+    titulo: d.titulo ?? d.title,
+    descripcion: d.descripcion ?? d.description,
+    categoria: (d.categoria ?? d.category || "").toLowerCase(),
+    estado: (d.estado ?? d.status || "")
       .toLowerCase()
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
-
+      .replace("in_progress", "en-revision")
       .replace("in progress", "en-revision"),
-    fecha: d.createdAt,
+    fecha: d.creadoEn ?? d.createdAt,
     ubicacion: {
-      lat: d.lat,
-      lng: d.lng,
-      direccion: d.address || "",
+      lat: d.latitud ?? d.lat,
+      lng: d.longitud ?? d.lng,
+      direccion: d.direccion ?? d.address || "",
     },
-    imagen: d.imageUrl,
-    ciudadanoId: String(d.userId),
-    ciudadanoNombre: d.user?.name || "Anónimo",
+    imagen: d.urlImagen ?? d.imageUrl,
+    ciudadanoId: String(d.usuarioId ?? d.userId),
+    ciudadanoNombre: d.usuario?.nombre ?? d.user?.name || "Anónimo",
   };
 }
 export const API_URL = "http://localhost:3000";
@@ -38,24 +38,24 @@ export async function getDenunciasPorUsuario(userId: string | number) {
   const data = await res.json();
   return data.map((d: any) => ({
     id: String(d.id),
-    titulo: d.title,
-    descripcion: d.description,
-    categoria: (d.category || "").toLowerCase(),
-    estado: (d.status || "")
+    titulo: d.titulo ?? d.title,
+    descripcion: d.descripcion ?? d.description,
+    categoria: (d.categoria ?? d.category || "").toLowerCase(),
+    estado: (d.estado ?? d.status || "")
       .toLowerCase()
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
-
+      .replace("in_progress", "en-revision")
       .replace("in progress", "en-revision"),
-    fecha: d.createdAt,
+    fecha: d.creadoEn ?? d.createdAt,
     ubicacion: {
-      lat: d.lat,
-      lng: d.lng,
-      direccion: d.address || "",
+      lat: d.latitud ?? d.lat,
+      lng: d.longitud ?? d.lng,
+      direccion: d.direccion ?? d.address || "",
     },
-    imagen: d.imageUrl,
-    ciudadanoId: String(d.userId),
-    ciudadanoNombre: d.user?.name || "Anónimo",
+    imagen: d.urlImagen ?? d.imageUrl,
+    ciudadanoId: String(d.usuarioId ?? d.userId),
+    ciudadanoNombre: d.usuario?.nombre ?? d.user?.name || "Anónimo",
   }));
 }
 
@@ -65,17 +65,17 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
 
   if (filters?.estado) {
     const statusMap: Record<string, string> = {
-      "pendiente": "Pending",
-      "en-revision": "In Progress",
-      "resuelta": "Resolved"
+      "pendiente": "pending",
+      "en-revision": "in_progress",
+      "resuelta": "resolved"
     };
     if (statusMap[filters.estado]) {
-      params.append("status", statusMap[filters.estado]);
+      params.append("estado", statusMap[filters.estado]);
     }
   }
 
   if (filters?.categoria) {
-    params.append("category", filters.categoria);
+    params.append("categoria", filters.categoria);
   }
 
   const res = await fetch(`${API_URL}/denuncias?${params.toString()}`, {
@@ -86,24 +86,24 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
   // Adaptar los campos del backend a los que espera el frontend
   return data.map((d: any) => ({
     id: String(d.id),
-    titulo: d.title,
-    descripcion: d.description,
-    categoria: (d.category || "").toLowerCase(),
-    estado: (d.status || "")
+    titulo: d.titulo ?? d.title,
+    descripcion: d.descripcion ?? d.description,
+    categoria: (d.categoria ?? d.category || "").toLowerCase(),
+    estado: (d.estado ?? d.status || "")
       .toLowerCase()
       .replace("pending", "pendiente")
       .replace("resolved", "resuelta")
-
+      .replace("in_progress", "en-revision")
       .replace("in progress", "en-revision"),
-    fecha: d.createdAt,
+    fecha: d.creadoEn ?? d.createdAt,
     ubicacion: {
-      lat: d.lat,
-      lng: d.lng,
-      direccion: d.address || "",
+      lat: d.latitud ?? d.lat,
+      lng: d.longitud ?? d.lng,
+      direccion: d.direccion ?? d.address || "",
     },
-    imagen: d.imageUrl,
-    ciudadanoId: String(d.userId),
-    ciudadanoNombre: d.user?.name || "Anónimo",
+    imagen: d.urlImagen ?? d.imageUrl,
+    ciudadanoId: String(d.usuarioId ?? d.userId),
+    ciudadanoNombre: d.usuario?.nombre ?? d.user?.name || "Anónimo",
   }));
 }
 // helpers/api.ts
@@ -120,7 +120,7 @@ export async function register({
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ nombre: name, correo: email, contrasena: password }),
   });
   if (!res.ok) throw new Error("Error en el registro");
   return res.json();
@@ -136,7 +136,7 @@ export async function login({
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ correo: email, contrasena: password }),
   });
   if (!res.ok) throw new Error("Credenciales incorrectas");
   return res.json();
@@ -151,7 +151,7 @@ export async function getMe(token: string) {
   // Map backend roles to frontend types
   return {
     ...data,
-    rol: data.role === "authority" ? "autoridad" : "ciudadano",
+    rol: (data.rol ?? data.role) === "authority" ? "autoridad" : "ciudadano",
   };
 }
 
@@ -166,9 +166,9 @@ export async function getDashboardStats() {
   // Mapear respuesta del backend al formato del frontend
   const stats = {
     total: d.total,
-    pendientes: d.byStatus["Pending"] || 0,
-    enRevision: d.byStatus["In Progress"] || 0,
-    resueltas: d.byStatus["Resolved"] || 0,
+    pendientes: d.byStatus["pending"] || 0,
+    enRevision: d.byStatus["in_progress"] || 0,
+    resueltas: d.byStatus["resolved"] || 0,
 
     porCategoria: {
       bache: d.byCategory["bache"] || 0,

@@ -16,6 +16,7 @@ import {
   Delete,
   ForbiddenException,
 } from '@nestjs/common';
+
 import { DenunciasService } from './denuncias.service';
 import { CreateDenunciaDto } from './dto/create-denuncia.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
@@ -30,15 +31,15 @@ export class DenunciasController {
 
   @Get()
   findAll(
-    @Query('status') status: string,
-    @Query('category') category: string,
+    @Query('estado') estado: string,
+    @Query('categoria') categoria: string,
   ) {
-    return this.denunciasService.findAll({ status, category });
+    return this.denunciasService.findAll({ estado, categoria });
   }
 
-  @Get('usuario/:userId')
-  findByUser(@Param('userId', ParseIntPipe) userId: number) {
-    return this.denunciasService.findByUser(userId);
+  @Get('usuario/:usuarioId')
+  findByUser(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
+    return this.denunciasService.findByUser(usuarioId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -58,15 +59,15 @@ export class DenunciasController {
     }),
   )
   create(
-    @Body() createDenunciaDto: CreateDenunciaDto,
-    @Request() req,
-    @UploadedFile() file: Express.Multer.File,
+    @Body() crearDenunciaDto: CreateDenunciaDto,
+    @Request() solicitud,
+    @UploadedFile() archivo: Express.Multer.File,
   ) {
-    const imageUrl = file ? `/uploads/${file.filename}` : undefined;
+    const urlImagen = archivo ? `/uploads/${archivo.filename}` : undefined;
     return this.denunciasService.create(
-      createDenunciaDto,
-      req.user.userId,
-      imageUrl,
+      crearDenunciaDto,
+      solicitud.user.usuarioId ?? solicitud.user.userId,
+      urlImagen,
     );
   }
 
@@ -84,25 +85,28 @@ export class DenunciasController {
   @Patch(':id/status')
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateStatusDto: UpdateStatusDto,
-    @Request() req,
+    @Body() actualizarEstadoDto: UpdateStatusDto,
+    @Request() solicitud,
   ) {
-    if (req.user.role !== 'authority') {
+    if (solicitud.user.rol !== 'authority' && solicitud.user.role !== 'authority') {
       throw new UnauthorizedException('Only authority can update status');
     }
-    return this.denunciasService.updateStatus(id, updateStatusDto.status);
+    const estado = (actualizarEstadoDto as any).estado ?? (actualizarEstadoDto as any).status;
+    return this.denunciasService.updateStatus(id, estado);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Request() solicitud) {
     const denuncia = await this.denunciasService.findOne(id);
     if (!denuncia) {
       throw new ForbiddenException('Complaint not found');
     }
 
     // Check if user is the owner or an authority (optional, but good practice)
-    if (denuncia.userId !== req.user.userId && req.user.role !== 'authority') {
+    const usuarioId = solicitud.user.usuarioId ?? solicitud.user.userId;
+    const rolUsuario = solicitud.user.rol ?? solicitud.user.role;
+    if (denuncia.usuarioId !== usuarioId && rolUsuario !== 'authority') {
       throw new ForbiddenException('You can only delete your own complaints');
     }
 

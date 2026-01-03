@@ -4,27 +4,27 @@ import { Transform } from 'class-transformer';
 export class CreateDenunciaDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  titulo: string;
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  descripcion: string;
 
   @IsString()
   @IsNotEmpty()
-  category: string;
+  categoria: string;
 
   @IsOptional()
   @Transform(({ value }) => parseFloat(value))
   @IsNumber()
-  lat?: number;
+  latitud?: number;
 
   @IsOptional()
   @Transform(({ value }) => parseFloat(value))
   @IsNumber()
-  lng?: number;
+  longitud?: number;
 
   @IsOptional()
   @IsString()
-  address?: string;
+  direccion?: string;
 }

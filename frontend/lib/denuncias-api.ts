@@ -18,13 +18,13 @@ export async function crearDenuncia({
   address?: string;
 }) {
   const formData = new FormData();
-  formData.append("title", title);
-  formData.append("description", description);
-  formData.append("category", category);
+  formData.append("titulo", title);
+  formData.append("descripcion", description);
+  formData.append("categoria", category);
   formData.append("image", image);
-  if (lat) formData.append("lat", lat.toString());
-  if (lng) formData.append("lng", lng.toString());
-  if (address) formData.append("address", address);
+  if (lat) formData.append("latitud", lat.toString());
+  if (lng) formData.append("longitud", lng.toString());
+  if (address) formData.append("direccion", address);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
@@ -60,10 +60,9 @@ export async function actualizarEstadoDenuncia(id: string | number, estado: stri
 
   // Map frontend status to backend status
   const statusMap: Record<string, string> = {
-    "pendiente": "Pending",
-    "en-revision": "In Progress",
-    "resuelta": "Resolved",
-
+    "pendiente": "pending",
+    "en-revision": "in_progress",
+    "resuelta": "resolved",
   };
 
   const backendStatus = statusMap[estado];
@@ -75,7 +74,7 @@ export async function actualizarEstadoDenuncia(id: string | number, estado: stri
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {})
     },
-    body: JSON.stringify({ status: backendStatus }),
+    body: JSON.stringify({ estado: backendStatus }),
   });
 
   if (!res.ok) {

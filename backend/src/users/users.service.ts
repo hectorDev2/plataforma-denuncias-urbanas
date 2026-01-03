@@ -9,7 +9,7 @@ export class UsersService {
 
   async findOne(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { email },
+      where: { correo: email },
     });
   }
 
@@ -21,12 +21,11 @@ export class UsersService {
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(data.password, salt);
-    return this.prisma.user.create({
-      data: {
-        ...data,
-        password: hashedPassword,
-      },
-    });
+    const contrasena = (data as any).contrasena ?? (data as any).password;
+    const hashedPassword = await bcrypt.hash(contrasena, salt);
+    const payload: any = { ...data, contrasena: hashedPassword };
+    // remove legacy password if present
+    delete payload.password;
+    return this.prisma.user.create({ data: payload });
   }
 }

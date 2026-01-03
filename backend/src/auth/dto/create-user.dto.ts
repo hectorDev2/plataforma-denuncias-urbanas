@@ -8,20 +8,20 @@ import {
 
 export class CreateUserDto {
   @IsEmail()
-  email: string;
+  correo: string;
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  nombre: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  contrasena: string;
 
   @IsString()
   @IsOptional()
   @IsIn(['citizen', 'authority'])
-  role?: string;
+  rol?: string;
 
   @IsString()
   @IsOptional()

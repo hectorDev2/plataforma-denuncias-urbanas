@@ -24,8 +24,8 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
-      loginDto.email,
-      loginDto.password,
+      loginDto.correo ?? loginDto.email,
+      (loginDto as any).contrasena ?? (loginDto as any).password,
     );
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');

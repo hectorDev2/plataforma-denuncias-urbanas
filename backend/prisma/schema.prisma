@@ -9,73 +9,72 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  password  String
+  correo    String   @unique
+  nombre    String
+  contrasena  String
 
-  role      String   @default("citizen")
+  rol       String   @default("citizen")
   // citizen | authority | admin
 
-  status    String   @default("active")
+  estado    String   @default("active")
   // active | blocked
 
   avatar    String?
 
-  complaints     Complaint[]
-  sentMessages   Message[]           @relation("SentMessages")
-  notifications  Notification[]
-  resetTokens    PasswordResetToken[]
+  denuncias     Complaint[]
+  mensajesEnviados   Message[]           @relation("MensajesEnviados")
+  notificaciones  Notification[]
+  tokensReinicio    PasswordResetToken[]
 }
 
 model Complaint {
   id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  category    String
+  titulo       String
+  descripcion String
+  categoria    String
 
-  status      String   @default("pending")
+  estado      String   @default("pending")
   // pending | in_progress | resolved
 
-  lat         Float?
-  lng         Float?
-  address     String?
-  imageUrl    String?
+  latitud     Float?
+  longitud    Float?
+  direccion   String?
+  urlImagen   String?
 
-  createdAt   DateTime @default(now())
+  creadoEn   DateTime @default(now())
 
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
+  usuarioId      Int
+  usuario        User     @relation(fields: [usuarioId], references: [id])
 }
 
 model Message {
   id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
+  contenido   String
+  creadoEn DateTime @default(now())
 
-  senderId  Int
-  sender    User     @relation("SentMessages", fields: [senderId], references: [id])
+  remitenteId  Int
+  remitente    User     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
 
-  receiverId Int
+  receptorId Int
 }
 
 model Notification {
   id        Int      @id @default(autoincrement())
-  type      String
+  tipo      String
   // status_change | message
+  mensaje   String
+  leido      Boolean  @default(false)
+  creadoEn DateTime @default(now())
 
-  message   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  usuarioId    Int
+  usuario      User     @relation(fields: [usuarioId], references: [id])
 }
 
 model PasswordResetToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
-  expiresAt DateTime
+  expiraEn DateTime
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  usuarioId    Int
+  usuario      User     @relation(fields: [usuarioId], references: [id])
 }

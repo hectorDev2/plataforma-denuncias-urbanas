@@ -13,9 +13,10 @@ export class AuthService {
 
   async validateUser(email: string, pass: string) {
     const user = await this.usersService.findOne(email);
-    if (user && (await bcrypt.compare(pass, user.password))) {
+    const hash = (user as any)?.contrasena ?? (user as any)?.password;
+    if (user && (await bcrypt.compare(pass, hash))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
+      const { contrasena, password, ...result } = user as any;
       return result;
     }
     return null;
@@ -23,10 +24,10 @@ export class AuthService {
 
   login(user: Omit<User, 'password'>) {
     const payload = {
-      email: user.email,
+      correo: (user as any).correo ?? (user as any).email,
       sub: user.id,
-      role: user.role,
-      name: user.name,
+      rol: (user as any).rol ?? (user as any).role,
+      nombre: (user as any).nombre ?? (user as any).name,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -35,13 +36,13 @@ export class AuthService {
 
   async register(data: any) {
     // Check if user exists
-    const existingUser = await this.usersService.findOne(data.email);
+    const existingUser = await this.usersService.findOne(data.correo ?? data.email);
     if (existingUser) {
       throw new UnauthorizedException('User already exists');
     }
     const user = await this.usersService.create(data);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...result } = user;
+    const { contrasena, password, ...result } = user as any;
     return result;
   }
 }

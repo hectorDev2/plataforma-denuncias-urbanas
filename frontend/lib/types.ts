@@ -24,7 +24,7 @@ export interface Denuncia {
 export interface Usuario {
   id: string
   nombre: string
-  email: string
+  correo: string
   rol: "ciudadano" | "autoridad"
   avatar?: string
 }

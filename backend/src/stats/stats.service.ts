@@ -12,8 +12,8 @@ export class StatsService {
 
     // 2️⃣ Denuncias por estado
     const statusGroups = await this.prisma.complaint.groupBy({
-      by: ['status'],
-      _count: { status: true },
+      by: ['estado'],
+      _count: { estado: true },
     });
     
     // Normalize to ensure all statuses are present
@@ -23,26 +23,26 @@ export class StatsService {
       resolved: 0,
     };
     statusGroups.forEach((g) => {
-      if (g.status in statusMap) {
-        statusMap[g.status] = g._count.status;
+      if (g.estado in statusMap) {
+        statusMap[g.estado] = g._count.estado;
       }
     });
 
     // 3️⃣ Denuncias por categoría
     const categoryGroups = await this.prisma.complaint.groupBy({
-      by: ['category'],
-      _count: { category: true },
+      by: ['categoria'],
+      _count: { categoria: true },
     });
 
     const categoryStats = categoryGroups.map((g) => ({
-      category: g.category,
-      count: g._count.category,
+      category: g.categoria,
+      count: g._count.categoria,
     }));
 
     // 4️⃣ Denuncias por fecha (JS processing for Chart data)
     const complaints = await this.prisma.complaint.findMany({
-      select: { createdAt: true },
-      orderBy: { createdAt: 'asc' },
+      select: { creadoEn: true },
+      orderBy: { creadoEn: 'asc' },
     });
 
     const dateStats = this.processDateStats(complaints);
@@ -50,10 +50,10 @@ export class StatsService {
     // 5️⃣ Usuarios registrados
     const totalUsers = await this.prisma.user.count();
     const activeUsers = await this.prisma.user.count({
-      where: { status: 'active' },
+      where: { estado: 'active' },
     });
     const blockedUsers = await this.prisma.user.count({
-      where: { status: 'blocked' },
+      where: { estado: 'blocked' },
     });
 
     return {
@@ -71,7 +71,7 @@ export class StatsService {
     };
   }
 
-  private processDateStats(complaints: { createdAt: Date }[]) {
+  private processDateStats(complaints: { creadoEn: Date }[]) {
     // Helpers
     const getWeekNumber = (d: Date) => {
       d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -86,7 +86,7 @@ export class StatsService {
     const byMonth: Record<string, number> = {};
 
     complaints.forEach((c) => {
-      const date = new Date(c.createdAt);
+      const date = new Date(c.creadoEn);
       const dayKey = date.toISOString().split('T')[0];
       const monthKey = date.toISOString().slice(0, 7); // YYYY-MM
       const weekKey = getWeekNumber(date);

@@ -8,44 +8,49 @@ export class DenunciasService {
 
   create(
     createDenunciaDto: CreateDenunciaDto,
-    userId: number,
-    imageUrl?: string,
+    usuarioId: number,
+    urlImagen?: string,
   ) {
-    return this.prisma.complaint.create({
-      data: {
-        ...createDenunciaDto,
-        userId,
-        imageUrl,
-      },
-    });
+    // Map DTO fields to Prisma fields
+    const data: any = {
+      titulo: (createDenunciaDto as any).titulo ?? (createDenunciaDto as any).title,
+      descripcion: (createDenunciaDto as any).descripcion ?? (createDenunciaDto as any).description,
+      categoria: (createDenunciaDto as any).categoria ?? (createDenunciaDto as any).category,
+      latitud: (createDenunciaDto as any).latitud ?? (createDenunciaDto as any).lat,
+      longitud: (createDenunciaDto as any).longitud ?? (createDenunciaDto as any).lng,
+      direccion: (createDenunciaDto as any).direccion ?? (createDenunciaDto as any).address,
+      urlImagen,
+      usuarioId,
+    };
+    return this.prisma.complaint.create({ data });
   }
   async findByUser(userId: number): Promise<any[]> {
-    return this.prisma.complaint.findMany({ where: { userId } });
+    return this.prisma.complaint.findMany({ where: { usuarioId: userId } });
   }
 
-  findAll(filters?: { status?: string; category?: string }) {
+  findAll(filters?: { estado?: string; categoria?: string }) {
     const where: any = {};
-    if (filters?.status) where.status = filters.status;
-    if (filters?.category) where.category = filters.category;
+    if (filters?.estado) where.estado = filters.estado;
+    if (filters?.categoria) where.categoria = filters.categoria;
 
     return this.prisma.complaint.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
-      include: { user: { select: { name: true, email: true } } },
+      orderBy: { creadoEn: 'desc' },
+      include: { usuario: { select: { nombre: true, correo: true } } },
     });
   }
 
   findOne(id: number) {
     return this.prisma.complaint.findUnique({
       where: { id },
-      include: { user: { select: { name: true, email: true } } },
+      include: { usuario: { select: { nombre: true, correo: true } } },
     });
   }
 
-  updateStatus(id: number, status: string) {
+  updateStatus(id: number, estado: string) {
     return this.prisma.complaint.update({
       where: { id },
-      data: { status },
+      data: { estado },
     });
   }
 
@@ -58,22 +63,22 @@ export class DenunciasService {
   async getStats() {
     const total = await this.prisma.complaint.count();
     const byStatus = await this.prisma.complaint.groupBy({
-      by: ['status'],
-      _count: { status: true },
+      by: ['estado'],
+      _count: { estado: true },
     });
     const byCategory = await this.prisma.complaint.groupBy({
-      by: ['category'],
-      _count: { category: true },
+      by: ['categoria'],
+      _count: { categoria: true },
     });
 
     return {
       total,
       byStatus: byStatus.reduce(
-        (acc, curr) => ({ ...acc, [curr.status]: curr._count.status }),
+        (acc, curr) => ({ ...acc, [curr.estado]: curr._count.estado }),
         {},
       ),
       byCategory: byCategory.reduce(
-        (acc, curr) => ({ ...acc, [curr.category]: curr._count.category }),
+        (acc, curr) => ({ ...acc, [curr.categoria]: curr._count.categoria }),
         {},
       ),
     };
