@@ -33,27 +33,27 @@ export default function RegistroPage() {
   const router = useRouter();
   const { register } = useAuth();
 
-  // 🔹 Función que maneja el envío del formulario
+  // Función que maneja el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    // 🔸 Condicional: verifica que las contraseñas coincidan
+    // Condicional: verifica que las contraseñas coincidan
     if (formData.password !== formData.confirmPassword) {
       setError("Las contraseñas no coinciden");
       setIsLoading(false);
       return;
     }
 
-    // 🔸 Condicional: valida longitud mínima de la contraseña
+    // Condicional: valida longitud mínima de la contraseña
     if (formData.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres");
       setIsLoading(false);
       return;
     }
 
-    // 🔹 Llama al backend para registrar
+    // Llama al backend para registrar
     const ok = await register({
       name: formData.name,
       email: formData.email,
@@ -73,12 +73,12 @@ export default function RegistroPage() {
     }
   };
 
-  // 🔹 Función que actualiza los valores del formulario
+  // Función que actualiza los valores del formulario
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // 🔸 Condicional: si el registro fue exitoso muestra mensaje
+  // Condicional: si el registro fue exitoso muestra mensaje
   if (success) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 bg-muted/30">
@@ -104,7 +104,7 @@ export default function RegistroPage() {
     );
   }
 
-  // 🔹 Render principal del formulario de registro
+  // Render principal del formulario de registro
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 bg-muted/30">
       <div className="w-full max-w-md space-y-6">
@@ -131,7 +131,7 @@ export default function RegistroPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* 🔸 Condicional: si hay error, muestra alerta */}
+              {/* Condicional: si hay error, muestra alerta */}
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
