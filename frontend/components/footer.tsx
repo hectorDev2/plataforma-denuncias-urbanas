@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="border-t border-white/20 dark:border-white/10 bg-white/40 dark:bg-black/20 backdrop-blur-md mt-auto shadow-sm">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
+          {/* Marca */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <MapPin className="h-6 w-6 text-primary" />
@@ -53,8 +53,8 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Objetivos ODS</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>🏙️ ODS 11: Ciudades Sostenibles</li>
-              <li>⚖️ ODS 16: Instituciones Sólidas</li>
+              <li>ODS 11: Ciudades Sostenibles</li>
+              <li>ODS 16: Instituciones Sólidas</li>
             </ul>
           </div>
 
