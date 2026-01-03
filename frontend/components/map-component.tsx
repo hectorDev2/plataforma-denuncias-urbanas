@@ -15,7 +15,7 @@ export function MapComponent({ ubicacion, className = "" }: MapComponentProps) {
   useEffect(() => {
     // En un entorno de producción, aquí se inicializaría Leaflet o Google Maps
     // Por ahora, mostramos un mapa estático con enlace a Google Maps
-    console.log("[v0] Map initialized for location:", ubicacion);
+    console.log("[v0] Mapa inicializado para la ubicación:", ubicacion);
   }, [ubicacion]);
 
   return (
