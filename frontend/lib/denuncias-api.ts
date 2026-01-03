@@ -58,7 +58,7 @@ export async function actualizarEstadoDenuncia(id: string | number, estado: stri
   const token =
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
-  // Map frontend status to backend status
+  // Mapear estado del frontend al estado del backend
   const statusMap: Record<string, string> = {
     "pendiente": "pending",
     "en-revision": "in_progress",
