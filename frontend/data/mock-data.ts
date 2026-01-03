@@ -32,13 +32,13 @@ export const categoriasConfig: Record<
   CategoriaDenuncia,
   { label: string; color: string; icon: string }
 > = {
-  bache: { label: "Bache", color: "bg-orange-500", icon: "🕳️" },
-  basura: { label: "Basura", color: "bg-green-500", icon: "🗑️" },
-  alumbrado: { label: "Alumbrado", color: "bg-yellow-500", icon: "💡" },
-  semaforo: { label: "Semáforo", color: "bg-red-500", icon: "🚦" },
-  alcantarilla: { label: "Alcantarilla", color: "bg-blue-500", icon: "⚠️" },
-  grafiti: { label: "Grafiti", color: "bg-purple-500", icon: "🎨" },
-  otro: { label: "Otro", color: "bg-gray-500", icon: "📋" },
+  bache: { label: "Bache", color: "bg-orange-500", icon: "" },
+  basura: { label: "Basura", color: "bg-green-500", icon: "" },
+  alumbrado: { label: "Alumbrado", color: "bg-yellow-500", icon: "" },
+  semaforo: { label: "Semáforo", color: "bg-red-500", icon: "" },
+  alcantarilla: { label: "Alcantarilla", color: "bg-blue-500", icon: "" },
+  grafiti: { label: "Grafiti", color: "bg-purple-500", icon: "" },
+  otro: { label: "Otro", color: "bg-gray-500", icon: "" },
 };
 
 export const estadosConfig: Record<
