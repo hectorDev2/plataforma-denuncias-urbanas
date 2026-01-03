@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Fix for default marker icon in Next.js
+// Corrección para el icono predeterminado de marcador en Next.js
 const iconUrl = "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png";
 const iconRetinaUrl =
   "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png";
@@ -70,7 +70,7 @@ function DraggableMarker({
   );
 }
 
-// Component to update map center when props change
+// Componente para actualizar el centro del mapa cuando cambian las props
 function MapUpdater({ center }: { center: [number, number] }) {
   const map = useMapEvents({});
   useEffect(() => {
