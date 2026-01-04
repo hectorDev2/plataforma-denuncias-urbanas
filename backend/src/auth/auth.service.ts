@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Usuario, Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -12,17 +11,17 @@ export class AuthService {
   ) { }
 
   async validateUser(email: string, pass: string) {
-    const user = await this.usersService.findOne(email);
-    const hash = (user as any)?.contrasena ?? (user as any)?.password;
+    const user: any = await this.usersService.findOne(email);
+    const hash = user?.contrasena ?? user?.password;
     if (user && (await bcrypt.compare(pass, hash))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { contrasena, password, ...result } = user as any;
+      const { contrasena, password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  login(user: Omit<Usuario, 'password'>) {
+  login(user: any) {
     const payload = {
       correo: (user as any).correo ?? (user as any).email,
       sub: user.id,

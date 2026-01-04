@@ -8,10 +8,10 @@ export class StatsService {
 
   async getDashboardStats() {
     // 1. Total de denuncias
-    const totalComplaints = await this.prisma.complaint.count();
+    const totaldenuncias = await this.prisma.denuncia.count();
 
     // 2. Denuncias por estado
-    const statusGroups = await this.prisma.complaint.groupBy({
+    const statusGroups = await this.prisma.denuncia.groupBy({
       by: ['estado'],
       _count: { estado: true },
     });
@@ -29,7 +29,7 @@ export class StatsService {
     });
 
     // 3. Denuncias por categoría
-    const categoryGroups = await this.prisma.complaint.groupBy({
+    const categoryGroups = await this.prisma.denuncia.groupBy({
       by: ['categoria'],
       _count: { categoria: true },
     });
@@ -40,12 +40,12 @@ export class StatsService {
     }));
 
     // 4. Denuncias por fecha (procesamiento JS para datos de gráficas)
-    const complaints = await this.prisma.complaint.findMany({
+    const denuncias = await this.prisma.denuncia.findMany({
       select: { creadoEn: true },
       orderBy: { creadoEn: 'asc' },
     });
 
-    const dateStats = this.processDateStats(complaints);
+    const dateStats = this.processDateStats(denuncias);
 
     // 5. Usuarios registrados
     const totalUsers = await this.prisma.usuario.count();
@@ -57,8 +57,8 @@ export class StatsService {
     });
 
     return {
-      complaints: {
-        total: totalComplaints,
+      denuncias: {
+        total: totaldenuncias,
         byStatus: statusMap,
         byCategory: categoryStats,
         byDate: dateStats,
@@ -71,7 +71,7 @@ export class StatsService {
     };
   }
 
-  private processDateStats(complaints: { creadoEn: Date }[]) {
+  private processDateStats(denuncias: { creadoEn: Date }[]) {
     // Funciones auxiliares
     const getWeekNumber = (d: Date) => {
       d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -85,7 +85,7 @@ export class StatsService {
     const byWeek: Record<string, number> = {};
     const byMonth: Record<string, number> = {};
 
-    complaints.forEach((c) => {
+    denuncias.forEach((c) => {
       const date = new Date(c.creadoEn);
       const dayKey = date.toISOString().split('T')[0];
       const monthKey = date.toISOString().slice(0, 7); // YYYY-MM

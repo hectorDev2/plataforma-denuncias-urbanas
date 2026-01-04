@@ -15,13 +15,21 @@ export class CreateDenunciaDto {
   categoria: string;
 
   @IsOptional()
-  @Transform(({ value }) => parseFloat(value))
-  @IsNumber()
+  @Transform(({ value }) => {
+    if (value === null || value === undefined || value === '') return undefined;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : undefined;
+  }, { toClassOnly: true })
+  @IsNumber({}, { message: 'latitud debe ser un número' })
   latitud?: number;
 
   @IsOptional()
-  @Transform(({ value }) => parseFloat(value))
-  @IsNumber()
+  @Transform(({ value }) => {
+    if (value === null || value === undefined || value === '') return undefined;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : undefined;
+  }, { toClassOnly: true })
+  @IsNumber({}, { message: 'longitud debe ser un número' })
   longitud?: number;
 
   @IsOptional()

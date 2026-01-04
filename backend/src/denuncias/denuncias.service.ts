@@ -11,13 +11,21 @@ export class DenunciasService {
     usuarioId: number,
     urlImagen?: string,
   ) {
-    // Mapear campos del DTO a los campos de Prisma
+    // Helper: convertir a float o null
+    const toFloatOrNull = (v: any) => {
+      if (v === undefined || v === null) return null;
+      if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+      const n = parseFloat(String(v));
+      return Number.isFinite(n) ? n : null;
+    };
+
+    // Mapear campos del DTO a los campos de Prisma (con coerción segura)
     const data: any = {
       titulo: (createDenunciaDto as any).titulo ?? (createDenunciaDto as any).title,
       descripcion: (createDenunciaDto as any).descripcion ?? (createDenunciaDto as any).description,
       categoria: (createDenunciaDto as any).categoria ?? (createDenunciaDto as any).category,
-      latitud: (createDenunciaDto as any).latitud ?? (createDenunciaDto as any).lat,
-      longitud: (createDenunciaDto as any).longitud ?? (createDenunciaDto as any).lng,
+      latitud: toFloatOrNull((createDenunciaDto as any).latitud ?? (createDenunciaDto as any).lat),
+      longitud: toFloatOrNull((createDenunciaDto as any).longitud ?? (createDenunciaDto as any).lng),
       direccion: (createDenunciaDto as any).direccion ?? (createDenunciaDto as any).address,
       urlImagen,
       usuarioId,
