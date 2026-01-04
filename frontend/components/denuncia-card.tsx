@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { API_URL } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, User, Trash2, MoreVertical, Clock, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import type { Denuncia } from "@/lib/types";
@@ -92,7 +93,7 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete, showAdmin
   // Si la imagen es relativa (empieza con /uploads), prepende el dominio del backend
   let imageUrl = denuncia.imagen;
   if (imageUrl && imageUrl.startsWith("/uploads")) {
-    imageUrl = `http://localhost:3000${imageUrl}`;
+    imageUrl = `${API_URL}${imageUrl}`;
   }
   return (
     <div className="relative group h-full">

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { categoriasConfig, estadosConfig } from "@/data/mock-data";
-import { getDenunciaPorId } from "@/lib/api";
+import { getDenunciaPorId, API_URL } from "@/lib/api";
 import type { Denuncia } from "@/lib/types";
 import { DenunciaControls } from "@/components/denuncia-controls";
 import { Comentarios } from "@/components/comentarios";
@@ -81,7 +81,7 @@ export default async function DenunciaDetallePage({
                 denuncia.imagen
                   ? denuncia.imagen.startsWith("http")
                     ? denuncia.imagen
-                    : `http://localhost:3000${denuncia.imagen.startsWith("/") ? "" : "/"
+                    : `${API_URL}${denuncia.imagen.startsWith("/") ? "" : "/"
                     }${denuncia.imagen}`
                   : "/placeholder.svg"
               }
