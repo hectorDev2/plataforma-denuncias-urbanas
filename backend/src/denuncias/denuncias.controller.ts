@@ -20,6 +20,7 @@ import {
 import { DenunciasService } from './denuncias.service';
 import { CreateDenunciaDto } from './dto/create-denuncia.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { CreateComentarioDto } from './dto/create-comentario.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -112,5 +113,53 @@ export class DenunciasController {
     }
 
     return this.denunciasService.remove(id);
+  }
+
+  // Comentarios
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/comentarios')
+  async createComentario(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() createComentarioDto: CreateComentarioDto,
+    @Request() solicitud,
+  ) {
+    const usuarioId = solicitud.user.usuarioId ?? solicitud.user.userId;
+    return this.denunciasService.createComentario(
+      id,
+      usuarioId,
+      createComentarioDto.contenido
+    );
+  }
+
+  @Get(':id/comentarios')
+  getComentarios(@Param('id', ParseIntPipe) id: number) {
+    return this.denunciasService.getComentarios(id);
+  }
+
+  // Votos
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/votos')
+  async toggleVoto(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() solicitud,
+  ) {
+    const usuarioId = solicitud.user.usuarioId ?? solicitud.user.userId;
+    return this.denunciasService.toggleVoto(id, usuarioId);
+  }
+
+  @Get(':id/votos/count')
+  getVotosCount(@Param('id', ParseIntPipe) id: number) {
+    return this.denunciasService.getVotosCount(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/votos/me')
+  async hasUserVoted(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() solicitud,
+  ) {
+    const usuarioId = solicitud.user.usuarioId ?? solicitud.user.userId;
+    const hasVoted = await this.denunciasService.hasUserVoted(id, usuarioId);
+    return { hasVoted };
   }
 }

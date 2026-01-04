@@ -43,7 +43,23 @@ export class DenunciasService {
   findOne(id: number) {
     return this.prisma.denuncia.findUnique({
       where: { id },
-      include: { usuario: { select: { nombre: true, correo: true } } },
+      include: { 
+        usuario: { select: { nombre: true, correo: true, avatar: true } },
+        comentarios: {
+          include: {
+            usuario: { select: { id: true, nombre: true, avatar: true, rol: true } }
+          },
+          orderBy: { creadoEn: 'desc' }
+        },
+        votos: {
+          include: {
+            usuario: { select: { id: true, nombre: true } }
+          }
+        },
+        _count: {
+          select: { votos: true, comentarios: true }
+        }
+      },
     });
   }
 
@@ -79,6 +95,66 @@ export class DenunciasService {
         {},
       ),
     };
+  }
+
+  // Comentarios
+  async createComentario(denunciaId: number, usuarioId: number, contenido: string) {
+    return this.prisma.comentario.create({
+      data: {
+        contenido,
+        denunciaId,
+        usuarioId,
+      },
+      include: {
+        usuario: { select: { id: true, nombre: true, avatar: true, rol: true } }
+      }
+    });
+  }
+
+  async getComentarios(denunciaId: number) {
+    return this.prisma.comentario.findMany({
+      where: { denunciaId },
+      include: {
+        usuario: { select: { id: true, nombre: true, avatar: true, rol: true } }
+      },
+      orderBy: { creadoEn: 'desc' }
+    });
+  }
+
+  // Votos
+  async toggleVoto(denunciaId: number, usuarioId: number) {
+    const existingVote = await this.prisma.voto.findUnique({
+      where: {
+        denunciaId_usuarioId: { denunciaId, usuarioId }
+      }
+    });
+
+    if (existingVote) {
+      await this.prisma.voto.delete({
+        where: { id: existingVote.id }
+      });
+      return { voted: false };
+    } else {
+      await this.prisma.voto.create({
+        data: { denunciaId, usuarioId }
+      });
+      return { voted: true };
+    }
+  }
+
+  async getVotosCount(denunciaId: number) {
+    return this.prisma.voto.count({
+      where: { denunciaId }
+    });
+  }
+
+  async hasUserVoted(denunciaId: number, usuarioId: number) {
+    const vote = await this.prisma.voto.findUnique({
+      where: {
+        denunciaId_usuarioId: { denunciaId, usuarioId }
+      }
+    });
+    return !!vote;
   }
 
   async actualizarEstado(

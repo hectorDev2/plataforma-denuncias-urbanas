@@ -25,6 +25,8 @@ model Usuario {
   mensajesEnviados   Mensaje[]           @relation("MensajesEnviados")
   notificaciones  Notificacion[]
   tokensReinicio    TokenRestablecimiento[]
+  comentarios   Comentario[]
+  votos         Voto[]
   @@map("User")
 }
 
@@ -46,16 +48,51 @@ model Denuncia {
 
   usuarioId      Int
   usuario        Usuario     @relation(fields: [usuarioId], references: [id])
+  
+  comentarios Comentario[]
+  votos       Voto[]
+  
   @@map("Complaint")
 }
 
-model Mensaje {
-  id        Int      @id @default(autoincrement())
+model Comentario {
+  id          Int      @id @default(autoincrement())
   contenido   String
-  creadoEn DateTime @default(now())
+  creadoEn    DateTime @default(now())
 
-  remitenteId  Int
-  remitente    Usuario     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
+  denunciaId  Int
+  denuncia    Denuncia @relation(fields: [denunciaId], references: [id], onDelete: Cascade)
+  
+  usuarioId   Int
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id])
+  
+  @@map("Comment")
+}
+
+model Voto {
+  id          Int      @id @default(autoincrement())
+  creadoEn    DateTime @default(now())
+
+  denunciaId  Int
+  denuncia    Denuncia @relation(fields: [denunciaId], references: [id], onDelete: Cascade)
+  
+  usuarioId   Int
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id])
+  
+  @@unique([denunciaId, usuarioId])
+  @@map("Vote")
+}
+  Int      @id @default(autoincrement())
+  contenido   String
+  creadoEn    DateTime @default(now())
+  leido       Boolean  @default(false)
+
+  denunciaId  Int?
+  
+  remitenteId Int
+  remitente   Usuario  @relation("MensajesEnviados", fields: [remitenteId], references: [id])
+
+  receptorId    Usuario     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
 
   receptorId Int
   @@map("Message")

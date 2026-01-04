@@ -67,10 +67,12 @@ export function Navbar() {
             <ThemeToggle />
             {isAuthenticated ? (
               <>
-                <div className="flex items-center gap-2 text-sm">
-                  <User className="h-4 w-4" />
-                  <span className="text-muted-foreground">{usuario?.nombre}</span>
-                </div>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/perfil" className="flex items-center gap-2">
+                    <UserIcon className="h-4 w-4" />
+                    <span className="text-sm">{usuario?.nombre}</span>
+                  </Link>
+                </Button>
                 <Button variant="outline" size="sm" onClick={logout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Salir

@@ -9,6 +9,8 @@ import { categoriasConfig, estadosConfig } from "@/data/mock-data";
 import { getDenunciaPorId } from "@/lib/api";
 import type { Denuncia } from "@/lib/types";
 import { DenunciaControls } from "@/components/denuncia-controls";
+import { Comentarios } from "@/components/comentarios";
+import { VotosButton } from "@/components/votos-button";
 
 import { MapPin, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
@@ -98,6 +100,7 @@ export default async function DenunciaDetallePage({
                 {categoriaInfo.label}
               </Badge>
               <Badge className={estadoInfo.color}>{estadoInfo.label}</Badge>
+              <VotosButton denunciaId={denuncia.id} />
             </div>
 
             <h1 className="text-3xl md:text-4xl font-bold text-balance">
@@ -273,6 +276,13 @@ export default async function DenunciaDetallePage({
                 <p className="text-muted-foreground">Sin ubicación registrada</p>
               </div>
             )}
+
+          {/* Sección de Comentarios */}
+          <Card>
+            <CardContent className="p-6">
+              <Comentarios denunciaId={denuncia.id} />
+            </CardContent>
+          </Card>
           </div>
         </div>
       </div>
