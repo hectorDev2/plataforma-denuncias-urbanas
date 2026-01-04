@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Usuario {
   id        Int      @id @default(autoincrement())
   correo    String   @unique
   nombre    String
@@ -44,7 +44,7 @@ model Complaint {
   creadoEn   DateTime @default(now())
 
   usuarioId      Int
-  usuario        User     @relation(fields: [usuarioId], references: [id])
+  usuario        Usuario     @relation(fields: [usuarioId], references: [id])
 }
 
 model Message {
@@ -53,7 +53,7 @@ model Message {
   creadoEn DateTime @default(now())
 
   remitenteId  Int
-  remitente    User     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
+  remitente    Usuario     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
 
   receptorId Int
 }
@@ -67,7 +67,7 @@ model Notification {
   creadoEn DateTime @default(now())
 
   usuarioId    Int
-  usuario      User     @relation(fields: [usuarioId], references: [id])
+  usuario      Usuario     @relation(fields: [usuarioId], references: [id])
 }
 
 model PasswordResetToken {
@@ -76,5 +76,5 @@ model PasswordResetToken {
   expiraEn DateTime
 
   usuarioId    Int
-  usuario      User     @relation(fields: [usuarioId], references: [id])
+  usuario      Usuario     @relation(fields: [usuarioId], references: [id])
 }
