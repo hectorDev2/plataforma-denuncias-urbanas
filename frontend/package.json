@@ -1,6 +1,4 @@
-git add .
-git commit -m "Actualizar CORS para Railway"
-git push origin proyecto{
+{
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
