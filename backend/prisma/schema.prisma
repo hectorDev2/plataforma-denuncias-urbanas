@@ -21,13 +21,13 @@ model Usuario {
 
   avatar    String?
 
-  denuncias     Complaint[]
+  denuncias     Denuncia[]
   mensajesEnviados   Message[]           @relation("MensajesEnviados")
   notificaciones  Notification[]
   tokensReinicio    PasswordResetToken[]
 }
 
-model Complaint {
+model Denuncia {
   id          Int      @id @default(autoincrement())
   titulo       String
   descripcion String
