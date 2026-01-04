@@ -48,11 +48,11 @@ export class StatsService {
     const dateStats = this.processDateStats(complaints);
 
     // 5. Usuarios registrados
-    const totalUsers = await this.prisma.user.count();
-    const activeUsers = await this.prisma.user.count({
+    const totalUsers = await this.prisma.usuario.count();
+    const activeUsers = await this.prisma.usuario.count({
       where: { estado: 'active' },
     });
-    const blockedUsers = await this.prisma.user.count({
+    const blockedUsers = await this.prisma.usuario.count({
       where: { estado: 'blocked' },
     });
 
