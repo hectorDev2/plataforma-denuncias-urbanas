@@ -22,9 +22,10 @@ model Usuario {
   avatar    String?
 
   denuncias     Denuncia[]
-  mensajesEnviados   Message[]           @relation("MensajesEnviados")
-  notificaciones  Notification[]
-  tokensReinicio    PasswordResetToken[]
+  mensajesEnviados   Mensaje[]           @relation("MensajesEnviados")
+  notificaciones  Notificacion[]
+  tokensReinicio    TokenRestablecimiento[]
+  @@map("User")
 }
 
 model Denuncia {
@@ -45,9 +46,10 @@ model Denuncia {
 
   usuarioId      Int
   usuario        Usuario     @relation(fields: [usuarioId], references: [id])
+  @@map("Complaint")
 }
 
-model Message {
+model Mensaje {
   id        Int      @id @default(autoincrement())
   contenido   String
   creadoEn DateTime @default(now())
@@ -56,9 +58,10 @@ model Message {
   remitente    Usuario     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
 
   receptorId Int
+  @@map("Message")
 }
 
-model Notification {
+model Notificacion {
   id        Int      @id @default(autoincrement())
   tipo      String
   // status_change | message
@@ -68,13 +71,15 @@ model Notification {
 
   usuarioId    Int
   usuario      Usuario     @relation(fields: [usuarioId], references: [id])
+  @@map("Notification")
 }
 
-model PasswordResetToken {
+model TokenRestablecimiento {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   expiraEn DateTime
 
   usuarioId    Int
   usuario      Usuario     @relation(fields: [usuarioId], references: [id])
+  @@map("PasswordResetToken")
 }
