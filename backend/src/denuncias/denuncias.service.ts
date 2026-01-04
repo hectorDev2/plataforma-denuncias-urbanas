@@ -22,10 +22,10 @@ export class DenunciasService {
       urlImagen,
       usuarioId,
     };
-    return this.prisma.complaint.create({ data });
+    return this.prisma.denuncia.create({ data });
   }
   async findByUser(userId: number): Promise<any[]> {
-    return this.prisma.complaint.findMany({ where: { usuarioId: userId } });
+    return this.prisma.denuncia.findMany({ where: { usuarioId: userId } });
   }
 
   findAll(filters?: { estado?: string; categoria?: string }) {
@@ -33,7 +33,7 @@ export class DenunciasService {
     if (filters?.estado) where.estado = filters.estado;
     if (filters?.categoria) where.categoria = filters.categoria;
 
-    return this.prisma.complaint.findMany({
+    return this.prisma.denuncia.findMany({
       where,
       orderBy: { creadoEn: 'desc' },
       include: { usuario: { select: { nombre: true, correo: true } } },
@@ -41,32 +41,32 @@ export class DenunciasService {
   }
 
   findOne(id: number) {
-    return this.prisma.complaint.findUnique({
+    return this.prisma.denuncia.findUnique({
       where: { id },
       include: { usuario: { select: { nombre: true, correo: true } } },
     });
   }
 
   updateStatus(id: number, estado: string) {
-    return this.prisma.complaint.update({
+    return this.prisma.denuncia.update({
       where: { id },
       data: { estado },
     });
   }
 
   remove(id: number) {
-    return this.prisma.complaint.delete({
+    return this.prisma.denuncia.delete({
       where: { id },
     });
   }
 
   async getStats() {
-    const total = await this.prisma.complaint.count();
-    const byStatus = await this.prisma.complaint.groupBy({
+    const total = await this.prisma.denuncia.count();
+    const byStatus = await this.prisma.denuncia.groupBy({
       by: ['estado'],
       _count: { estado: true },
     });
-    const byCategory = await this.prisma.complaint.groupBy({
+    const byCategory = await this.prisma.denuncia.groupBy({
       by: ['categoria'],
       _count: { categoria: true },
     });
