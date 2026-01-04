@@ -66,7 +66,7 @@ model Comentario {
   usuarioId   Int
   usuario     Usuario  @relation(fields: [usuarioId], references: [id])
   
-  @@map("Comment")
+  @@map("Comentario")
 }
 
 model Voto {
@@ -80,9 +80,11 @@ model Voto {
   usuario     Usuario  @relation(fields: [usuarioId], references: [id])
   
   @@unique([denunciaId, usuarioId])
-  @@map("Vote")
+  @@map("Voto")
 }
-  Int      @id @default(autoincrement())
+
+model Mensaje {
+  id          Int      @id @default(autoincrement())
   contenido   String
   creadoEn    DateTime @default(now())
   leido       Boolean  @default(false)
@@ -91,8 +93,6 @@ model Voto {
   
   remitenteId Int
   remitente   Usuario  @relation("MensajesEnviados", fields: [remitenteId], references: [id])
-
-  receptorId    Usuario     @relation("MensajesEnviados", fields: [remitenteId], references: [id])
 
   receptorId Int
   @@map("Message")

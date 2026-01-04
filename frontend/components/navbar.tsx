@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X, MapPin, User, LogOut } from "lucide-react"
+import { Menu, X, MapPin, User as UserIcon, LogOut } from "lucide-react"
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -118,7 +118,7 @@ export function Navbar() {
               {isAuthenticated ? (
                 <>
                   <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
-                    <User className="h-4 w-4" />
+                    <UserIcon className="h-4 w-4" />
                     {usuario?.nombre}
                   </div>
                   <Button

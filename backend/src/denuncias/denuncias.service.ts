@@ -36,31 +36,46 @@ export class DenunciasService {
     return this.prisma.denuncia.findMany({
       where,
       orderBy: { creadoEn: 'desc' },
-      include: { usuario: { select: { nombre: true, correo: true } } },
-    });
-  }
-
-  findOne(id: number) {
-    return this.prisma.denuncia.findUnique({
-      where: { id },
       include: { 
-        usuario: { select: { nombre: true, correo: true, avatar: true } },
-        comentarios: {
-          include: {
-            usuario: { select: { id: true, nombre: true, avatar: true, rol: true } }
-          },
-          orderBy: { creadoEn: 'desc' }
-        },
-        votos: {
-          include: {
-            usuario: { select: { id: true, nombre: true } }
-          }
-        },
+        usuario: { select: { nombre: true, correo: true } },
         _count: {
           select: { votos: true, comentarios: true }
         }
       },
     });
+  }
+
+  async findOne(id: number) {
+    try {
+      return await this.prisma.denuncia.findUnique({
+        where: { id },
+        include: { 
+          usuario: { select: { nombre: true, correo: true, avatar: true } },
+          comentarios: {
+            include: {
+              usuario: { select: { id: true, nombre: true, avatar: true, rol: true } }
+            },
+            orderBy: { creadoEn: 'desc' }
+          },
+          votos: {
+            include: {
+              usuario: { select: { id: true, nombre: true } }
+            }
+          },
+          _count: {
+            select: { votos: true, comentarios: true }
+          }
+        },
+      });
+    } catch (error) {
+      // Fallback si las tablas aún no existen
+      return await this.prisma.denuncia.findUnique({
+        where: { id },
+        include: { 
+          usuario: { select: { nombre: true, correo: true, avatar: true } }
+        },
+      });
+    }
   }
 
   updateStatus(id: number, estado: string) {

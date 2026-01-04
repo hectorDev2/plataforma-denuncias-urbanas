@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { categoriasConfig, estadosConfig } from "@/data/mock-data";
@@ -12,7 +12,7 @@ import { DenunciaControls } from "@/components/denuncia-controls";
 import { Comentarios } from "@/components/comentarios";
 import { VotosButton } from "@/components/votos-button";
 
-import { MapPin, Calendar, User } from "lucide-react";
+import { MapPin, Calendar, User, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import DenunciaMapWrapper from "@/components/DenunciaMapWrapper";
@@ -276,14 +276,20 @@ export default async function DenunciaDetallePage({
                 <p className="text-muted-foreground">Sin ubicación registrada</p>
               </div>
             )}
+          </div>
 
           {/* Sección de Comentarios */}
           <Card>
-            <CardContent className="p-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                Comentarios
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <Comentarios denunciaId={denuncia.id} />
             </CardContent>
           </Card>
-          </div>
         </div>
       </div>
     </div >

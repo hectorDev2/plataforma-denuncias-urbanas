@@ -28,6 +28,8 @@ export async function getDenunciaPorId(id: string | number) {
     imagen: d.urlImagen ?? d.imageUrl ?? null,
     ciudadanoId: String(d.usuarioId ?? d.userId ?? ""),
     ciudadanoNombre: d.usuario?.nombre ?? d.user?.name ?? "Anónimo",
+    comentarios: d.comentarios ?? [],
+    votos: d._count?.votos ?? 0,
   };
 }
 
@@ -59,6 +61,7 @@ export async function getDenunciasPorUsuario(userId: string | number) {
     imagen: d.urlImagen ?? d.imageUrl ?? null,
     ciudadanoId: String(d.usuarioId ?? d.userId ?? ""),
     ciudadanoNombre: d.usuario?.nombre ?? d.user?.name ?? "Anónimo",
+    votos: d._count?.votos ?? 0,
   }));
 }
 
@@ -107,6 +110,7 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
     imagen: d.urlImagen ?? d.imageUrl ?? null,
     ciudadanoId: String(d.usuarioId ?? d.userId ?? ""),
     ciudadanoNombre: d.usuario?.nombre ?? d.user?.name ?? "Anónimo",
+    votos: d._count?.votos ?? 0,
   }));
 }
 
