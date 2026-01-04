@@ -14,7 +14,7 @@ export function Navbar() {
   const { usuario, logout, isAuthenticated } = useAuth()
 
   const navLinks = isAuthenticated
-    ? usuario?.rol === "autoridad"
+    ? (usuario?.rol === "autoridad" || usuario?.rol === "admin")
       ? [
         { href: "/", label: "Inicio" },
         { href: "/denuncias", label: "Denuncias" },

@@ -87,7 +87,7 @@ export function DenunciaCard({ denuncia, showDelete = false, onDelete, showAdmin
     color: "bg-gray-400",
   };
 
-  const isAuthority = usuario?.rol === "autoridad";
+  const isAuthority = usuario?.rol === "autoridad" || usuario?.rol === "admin";
 
   // Si la imagen es relativa (empieza con /uploads), prepende el dominio del backend
   let imageUrl = denuncia.imagen;

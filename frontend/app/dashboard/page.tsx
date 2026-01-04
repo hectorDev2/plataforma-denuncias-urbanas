@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function cargarDatos() {
-      if (!isAuthenticated || usuario?.rol !== "autoridad") return;
+      if (!isAuthenticated || (usuario?.rol !== "autoridad" && usuario?.rol !== "admin")) return;
 
       try {
         const [statsData, pendientesData] = await Promise.all([
@@ -55,7 +55,7 @@ export default function DashboardPage() {
     cargarDatos();
   }, [isAuthenticated, usuario]);
 
-  if (!isAuthenticated || usuario?.rol !== "autoridad") {
+  if (!isAuthenticated || (usuario?.rol !== "autoridad" && usuario?.rol !== "admin")) {
     return (
       <div className="container mx-auto px-4 py-12">
         <Card className="max-w-md mx-auto bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
@@ -64,7 +64,7 @@ export default function DashboardPage() {
             <div className="space-y-2">
               <h2 className="text-xl font-bold">Acceso Restringido</h2>
               <p className="text-muted-foreground">
-                Esta sección es solo para autoridades. Inicia sesión con una cuenta de autoridad.
+                Esta sección es solo para autoridades y administradores. Inicia sesión con una cuenta autorizada.
               </p>
             </div>
             <Button asChild>

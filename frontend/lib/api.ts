@@ -157,12 +157,14 @@ export async function getMe(token: string) {
 
   const data = await res.json();
 
-  // Mapear rol: authority → autoridad, admin → admin, resto → ciudadano
+  // Mapear rol: mantener autoridad y admin, resto → ciudadano
   let rolMapeado = "ciudadano";
-  if (data.rol === "authority" || data.role === "authority") {
+  if (data.rol === "authority" || data.role === "authority" || data.rol === "autoridad") {
     rolMapeado = "autoridad";
   } else if (data.rol === "admin" || data.role === "admin") {
     rolMapeado = "admin";
+  } else if (data.rol === "autoridad") {
+    rolMapeado = "autoridad";
   }
 
   return {
