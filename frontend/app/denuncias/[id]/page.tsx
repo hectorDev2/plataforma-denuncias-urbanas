@@ -145,6 +145,11 @@ export default async function DenunciaDetallePage({
                     <p className="text-sm text-muted-foreground">
                       Las autoridades están evaluando el caso
                     </p>
+                    {denuncia.estadoActualizadoEn && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {format(new Date(denuncia.estadoActualizadoEn), "PPP p", { locale: es })}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -161,6 +166,11 @@ export default async function DenunciaDetallePage({
                       <p className="text-sm text-muted-foreground">
                         Caso evaluado por las autoridades
                       </p>
+                      {denuncia.estadoActualizadoEn && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {format(new Date(denuncia.estadoActualizadoEn), "PPP p", { locale: es })}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-4">
@@ -172,6 +182,11 @@ export default async function DenunciaDetallePage({
                       <p className="text-sm text-muted-foreground">
                         El problema ha sido solucionado
                       </p>
+                      {denuncia.estadoActualizadoEn && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {format(new Date(denuncia.estadoActualizadoEn), "PPP p", { locale: es })}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </>

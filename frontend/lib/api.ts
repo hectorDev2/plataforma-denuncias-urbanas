@@ -19,6 +19,7 @@ export async function getDenunciaPorId(id: string | number) {
       .replace("in_progress", "en-revision")
       .replace("in progress", "en-revision"),
     fecha: d.creadoEn ?? d.createdAt ?? null,
+    estadoActualizadoEn: d.estadoActualizadoEn ?? d.updatedAt ?? null,
     ubicacion: {
       lat: d.latitud ?? d.lat ?? null,
       lng: d.longitud ?? d.lng ?? null,
@@ -49,6 +50,7 @@ export async function getDenunciasPorUsuario(userId: string | number) {
       .replace("in_progress", "en-revision")
       .replace("in progress", "en-revision"),
     fecha: d.creadoEn ?? d.createdAt ?? null,
+    estadoActualizadoEn: d.estadoActualizadoEn ?? d.updatedAt ?? null,
     ubicacion: {
       lat: d.latitud ?? d.lat ?? null,
       lng: d.longitud ?? d.lng ?? null,
@@ -96,6 +98,7 @@ export async function getDenuncias(filters?: { estado?: string; categoria?: stri
       .replace("in_progress", "en-revision")
       .replace("in progress", "en-revision"),
     fecha: d.creadoEn ?? d.createdAt ?? null,
+    estadoActualizadoEn: d.estadoActualizadoEn ?? d.updatedAt ?? null,
     ubicacion: {
       lat: d.latitud ?? d.lat ?? null,
       lng: d.longitud ?? d.lng ?? null,

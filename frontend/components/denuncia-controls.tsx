@@ -39,8 +39,8 @@ export function DenunciaControls({ denunciaId, currentStatus }: DenunciaControls
     const [isDeleting, setIsDeleting] = useState(false);
     const [status, setStatus] = useState(currentStatus);
 
-    // Determina si el usuario es una autoridad para mostrar controles administrativos
-    const isAuthority = usuario?.rol === "autoridad";
+    // Determina si el usuario es una autoridad o admin para mostrar controles administrativos
+    const isAuthority = usuario?.rol === "autoridad" || usuario?.rol === "admin";
 
     if (!isAuthority) return null;
 
@@ -72,32 +72,37 @@ export function DenunciaControls({ denunciaId, currentStatus }: DenunciaControls
     };
 
     return (
-        <div className="flex gap-2">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
-                        <MoreVertical className="h-4 w-4 mr-2" />
-                        Gestionar Estado
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Cambiar Estado</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleStatusChange("pendiente")}>
-                        <Clock className="mr-2 h-4 w-4 text-yellow-600" />
-                        Pendiente
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleStatusChange("en-revision")}>
-                        <AlertCircle className="mr-2 h-4 w-4 text-blue-600" />
-                        En Revisión
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleStatusChange("resuelta")}>
-                        <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
-                        Resuelta
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                </DropdownMenuContent>
-            </DropdownMenu>
+        <div className="flex gap-2 flex-wrap">
+            {/* Botones visibles para cambiar estado */}
+            <Button 
+                variant={status === "pendiente" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleStatusChange("pendiente")}
+                className="flex items-center gap-2"
+            >
+                <Clock className="h-4 w-4 text-yellow-600" />
+                Pendiente
+            </Button>
+            
+            <Button 
+                variant={status === "en-revision" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleStatusChange("en-revision")}
+                className="flex items-center gap-2"
+            >
+                <AlertCircle className="h-4 w-4 text-blue-600" />
+                En Revisión
+            </Button>
+            
+            <Button 
+                variant={status === "resuelta" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleStatusChange("resuelta")}
+                className="flex items-center gap-2"
+            >
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                Resuelta
+            </Button>
 
             <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
                 <AlertDialogTrigger asChild>

@@ -88,8 +88,9 @@ export class DenunciasController {
     @Body() actualizarEstadoDto: UpdateStatusDto,
     @Request() solicitud,
   ) {
-    if (solicitud.user.rol !== 'authority' && solicitud.user.role !== 'authority') {
-      throw new UnauthorizedException('Only authority can update status');
+    const userRole = solicitud.user.rol ?? solicitud.user.role;
+    if (userRole !== 'authority' && userRole !== 'admin') {
+      throw new UnauthorizedException('Only authority or admin can update status');
     }
     const estado = (actualizarEstadoDto as any).estado ?? (actualizarEstadoDto as any).status;
     return this.denunciasService.updateStatus(id, estado);
