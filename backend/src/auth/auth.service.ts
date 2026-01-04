@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User, Prisma } from '@prisma/client';
+import { Usuario, Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
     return null;
   }
 
-  login(user: Omit<User, 'password'>) {
+  login(user: Omit<Usuario, 'password'>) {
     const payload = {
       correo: (user as any).correo ?? (user as any).email,
       sub: user.id,
