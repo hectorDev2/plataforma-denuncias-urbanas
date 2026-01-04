@@ -89,7 +89,6 @@ export class DenunciasService {
       where: { id },
       data: {
         estado: nuevoEstado,
-        estadoActualizadoEn: new Date(),
       },
     });
   }

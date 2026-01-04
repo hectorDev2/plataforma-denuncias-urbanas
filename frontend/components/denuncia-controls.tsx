@@ -40,7 +40,11 @@ export function DenunciaControls({ denunciaId, currentStatus }: DenunciaControls
     const [status, setStatus] = useState(currentStatus);
 
     // Determina si el usuario es una autoridad o admin para mostrar controles administrativos
-    const isAuthority = usuario?.rol === "autoridad" || usuario?.rol === "admin";
+    const isAuthority = usuario && (
+        usuario.rol === "autoridad" || 
+        usuario.rol === "authority" || 
+        usuario.rol === "admin"
+    );
 
     if (!isAuthority) return null;
 
