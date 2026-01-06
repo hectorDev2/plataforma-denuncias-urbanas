@@ -221,8 +221,8 @@ export default function NuevaDenunciaPage() {
 
         <Card className="bg-white/60 backdrop-blur-md border-white/40 shadow-sm">
           <CardHeader>
-            <CardTitle>Información del Problema</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-gray-900 dark:text-slate-300">Información del Problema</CardTitle>
+            <CardDescription className="text-gray-600 dark:text-slate-400">
               Completa todos los campos para ayudarnos a resolver el problema
             </CardDescription>
           </CardHeader>
@@ -236,7 +236,7 @@ export default function NuevaDenunciaPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="titulo">Título *</Label>
+                <Label htmlFor="titulo" className="dark:text-slate-300">Título</Label>
                 <Input
                   id="titulo"
                   placeholder="Ej: Bache profundo en Av. Principal"
@@ -244,18 +244,18 @@ export default function NuevaDenunciaPage() {
                   onChange={(e) => handleChange("titulo", e.target.value)}
                   required
                   disabled={isLoading}
-                  className="!bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0"
+                  className="!bg-gray-50 dark:!bg-slate-800 !border-gray-200 dark:!border-slate-600 focus:!border-primary transition-all shadow-sm"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="categoria">Categoría *</Label>
+                <Label htmlFor="categoria" className="dark:text-slate-300">Categoría</Label>
                 <Select
                   value={formData.categoria}
                   onValueChange={(value) => handleChange("categoria", value)}
                   disabled={isLoading}
                 >
-                  <SelectTrigger id="categoria" className="!bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0">
+                  <SelectTrigger id="categoria" className="!bg-gray-50 dark:!bg-slate-800 !border-gray-200 dark:!border-slate-600 focus:!border-primary transition-all shadow-sm">
                     <SelectValue placeholder="Selecciona una categoría" />
                   </SelectTrigger>
                   <SelectContent>
@@ -269,7 +269,7 @@ export default function NuevaDenunciaPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="descripcion">Descripción *</Label>
+                <Label htmlFor="descripcion" className="dark:text-slate-300">Descripción</Label>
                 <Textarea
                   id="descripcion"
                   placeholder="Describe el problema con el mayor detalle posible..."
@@ -278,7 +278,7 @@ export default function NuevaDenunciaPage() {
                   required
                   disabled={isLoading}
                   rows={5}
-                  className="resize-none !bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md"
+                  className="resize-none !bg-gray-50 dark:!bg-slate-800 !border-gray-200 dark:!border-slate-600 focus:!border-primary transition-all shadow-sm"
                 />
                 <p className="text-xs text-muted-foreground">
                   Incluye detalles como tamaño, tiempo que lleva el problema,
@@ -287,7 +287,7 @@ export default function NuevaDenunciaPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="direccion">Ubicación *</Label>
+                <Label htmlFor="direccion" className="dark:text-slate-300">Ubicación</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -297,7 +297,7 @@ export default function NuevaDenunciaPage() {
                     onChange={(e) => handleChange("direccion", e.target.value)}
                     required
                     disabled={isLoading}
-                    className="pl-10 !bg-white !border-white focus:!bg-white focus:!border-primary transition-all shadow-md aria-invalid:!border-white aria-invalid:!ring-0"
+                    className="pl-10 !bg-gray-50 dark:!bg-slate-800 !border-gray-200 dark:!border-slate-600 focus:!border-primary transition-all shadow-sm"
                   />
                 </div>
                 <Button
@@ -306,7 +306,7 @@ export default function NuevaDenunciaPage() {
                   size="sm"
                   onClick={handleGetCurrentLocation}
                   disabled={isGettingLocation || isLoading}
-                  className="w-full bg-white border-white hover:bg-gray-50 transition-all shadow-md"
+                  className="w-full bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all shadow-sm"
                 >
                   <Navigation className="h-4 w-4 mr-2" />
                   {isGettingLocation
@@ -335,8 +335,8 @@ export default function NuevaDenunciaPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="imagen">Fotografía *</Label>
-                <div className="border-2 border-dashed border-white/60 rounded-lg p-6 text-center hover:border-primary hover:bg-white/40 bg-white/20 backdrop-blur-sm transition-all shadow-sm">
+                <Label htmlFor="imagen" className="dark:text-slate-300">Fotografía</Label>
+                <div className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg p-6 text-center hover:border-primary hover:bg-gray-50 dark:hover:bg-slate-800 bg-gray-50/50 dark:bg-slate-800/50 backdrop-blur-sm transition-all shadow-sm">
                   <input
                     id="imagen"
                     type="file"
